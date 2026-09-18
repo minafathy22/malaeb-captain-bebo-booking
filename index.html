@@ -20,11 +20,16 @@ body{background:radial-gradient(circle at 50% -10%,#183a26 0,#07130d 38%,#050b08
 .sponsor.hero-ad{min-height:230px;border:1px solid #755f20;box-shadow:0 18px 44px #0006}.sponsor.hero-ad .adimg{height:260px}.sponsor .copy b{font-size:20px}.sponsor .copy a{display:inline-flex;margin-top:8px;background:var(--gold);color:#111;padding:8px 12px;border-radius:10px;text-decoration:none;font-weight:900}
 .wa-float{width:62px;height:62px;left:18px;bottom:20px;background:#25D366;border:3px solid #fff;box-shadow:0 8px 28px #0008;transition:.2s}.wa-float:hover{transform:scale(1.06)}.wa-float:after{content:'واتساب';position:absolute;left:68px;background:#fff;color:#123;padding:5px 8px;border-radius:8px;font:800 11px Cairo;white-space:nowrap;box-shadow:0 4px 14px #0003}
 @media(max-width:520px){.wrap{padding:0 10px 88px}.card{border-radius:17px}.sponsor.hero-ad .adimg{height:210px}.wa-float:after{display:none}}
+
+.loc-float{position:fixed;right:22px;bottom:100px;z-index:999;width:58px;height:58px;border-radius:50%;display:none;align-items:center;justify-content:center;background:#fff;color:#143f35;border:2px solid rgba(255,255,255,.92);box-shadow:0 10px 28px rgba(0,0,0,.28);text-decoration:none;font-size:26px}
+.loc-float.show{display:flex}.loc-float:hover{transform:translateY(-2px)}
+@media(max-width:600px){.loc-float{right:18px;bottom:92px;width:54px;height:54px}}
+.ad-fallback{width:100%;min-height:120px;display:grid;place-items:center;background:#e8b23a;color:#111;font:900 34px Cairo;border-radius:14px}
 </style></head><body>
 <header class="hero"><div class="brand">⚽ ملاعب كابتن بيبو</div><p>اختار ملعبك وميعادك في أقل من دقيقة</p></header>
 <main class="wrap" id="main">
 <div id="sponsorHero" class="adzone"></div>
-<section class="card"><h2>🏟️ الملعب</h2><div class="venues" id="venues"></div><div id="venueLocation" class="venue-location"></div></section>
+<section class="card"><h2>🏟️ الملعب</h2><div class="venues" id="venues"></div><div id="venueLocation" style="display:none"></div></section>
 <section class="card"><h2>📅 اختار اليوم</h2><div class="days" id="days"></div><div id="slotStatus" class="status">جارٍ تحميل المواعيد…</div><div class="slots" id="slots"></div></section>
 <div id="sponsorMid" class="adzone"></div><section class="card" id="form" style="display:none"><h2>✓ ثبّت طلبك</h2><div class="summary" id="summary"></div>
 <label>مدة الحجز</label><select id="duration"></select>
@@ -48,7 +53,7 @@ const ev=(t,h=null,sp=null,meta={})=>sb.rpc('pitch_public_event',{p_event_type:t
 function normPhone(v){let p=String(v||'').replace(/\D/g,'');if(p.startsWith('0020'))p=p.slice(4);else if(p.startsWith('20')&&p.length>=12)p=p.slice(2);if(p.length===10&&p.startsWith('1'))p='0'+p;return p}
 function sponsorCard(x,place){
  const media=x.image_url||x.logo_url, hero=place==='hero';
- return `<aside class="card sponsor ${hero?'hero-ad':'mid-ad'}"><span class="adtag">إعلان</span>${media?`<img class="${hero?'adimg':''}" src="${media}" alt="${x.name}" onerror="this.style.display='none'">`:`<div style="width:${hero?'100%':'72px'};height:${hero?'180px':'72px'};display:grid;place-items:center;background:#e8b23a;color:#111;font:900 32px Cairo">${(x.name||'S').slice(0,1)}</div>`}<div class="copy"><div class="muted">برعاية</div><b>${x.name}</b><div class="muted">${x.copy||''}</div><a href="${x.url}" target="_blank" rel="noopener noreferrer" data-sp="${x.id}" data-place="${place}">${x.cta||'اعرف أكتر'} ↗</a></div></aside>`;
+ return `<aside class="card sponsor ${hero?'hero-ad':'mid-ad'}"><span class="adtag">إعلان</span>${media?`<img class="${hero?'adimg':''}" src="${media}" alt="${x.name||'Sponsor'}" referrerpolicy="no-referrer" onerror="this.outerHTML='<div class=&quot;ad-fallback&quot;>${String(x.name||'S').slice(0,1).replace(/[<>&]/g,'')}</div>'">`:`<div class="ad-fallback">${String(x.name||'S').slice(0,1).replace(/[<>&]/g,'')}</div>`}<div class="copy"><div class="muted">برعاية</div><b>${x.name}</b><div class="muted">${x.copy||''}</div><a href="${x.url}" target="_blank" rel="noopener noreferrer" data-sp="${x.id}" data-place="${place}">${x.cta||'اعرف أكتر'} ↗</a></div></aside>`;
 }
 function renderSponsors(){
  ['sponsorHero','sponsorMid','sponsorFooter'].forEach(id=>$(id).innerHTML='');
@@ -58,7 +63,18 @@ function renderSponsors(){
  [['hero',0,'sponsorHero'],['mid',1,'sponsorMid'],['footer',2,'sponsorFooter']].forEach(([place,idx,id])=>{const x=pick(place,idx);if(!x)return;used.add(x.id);$(id).innerHTML=sponsorCard(x,place);ev('sponsor_impression',null,x.id,{placement:place});});
  document.querySelectorAll('[data-sp]').forEach(a=>a.onclick=()=>ev('sponsor_click',null,a.dataset.sp,{placement:a.dataset.place}));
 }
-function showVenueLocation(sv){const vl=$('venueLocation');if(!vl)return;if(sv&&(sv.address||sv.map_url)){vl.style.display='block';vl.innerHTML=`<b>📍 ${sv.name}</b>${sv.address?`<div class="muted">${sv.address}</div>`:''}${sv.map_url?`<a href="${sv.map_url}" target="_blank" rel="noopener noreferrer">افتح الموقع على الخريطة ↗</a>`:''}`}else{vl.style.display='none';vl.innerHTML=''}}
+function showVenueLocation(sv){
+ const a=$('locFloat');
+ if(!a)return;
+ const mapUrl=sv&&sv.map_url&&/^https:\/\//i.test(String(sv.map_url))?String(sv.map_url):null;
+ if(mapUrl){
+   a.href=mapUrl;a.classList.add('show');
+   a.setAttribute('aria-label','موقع '+(sv.name||'الملعب'));
+   a.title=sv.address?('موقع الملعب — '+sv.address):'موقع الملعب';
+ }else{
+   a.removeAttribute('href');a.classList.remove('show');a.title='';
+ }
+}
 async function boot(){
  const {data,error}=await sb.rpc('pitch_public_booking_config',{p_venue:null});if(error)throw error;
  venues=data.venues||[];sponsors=data.sponsors||[];venue=venues[0]?.id||'rey';renderVenues();renderDays();renderSponsors();const c=await sb.rpc('pitch_public_booking_config',{p_venue:venue});if(!c.error){sponsors=c.data.sponsors||[];renderSponsors();showVenueLocation(c.data.selected_venue)}await loadSlots();ev('page_view');
@@ -74,4 +90,4 @@ $('duration').onchange=updateSummary;
 $('phone').oninput=e=>e.target.value=e.target.value.replace(/\D/g,'').slice(0,15);
 $('submit').onclick=async()=>{const name=$('name').value.trim(),phone=normPhone($('phone').value),span=Number($('duration').value||1);if(!name)return alert('اكتب اسمك');if(!/^01\d{9}$/.test(phone))return alert('راجع رقم الموبايل');const b=$('submit');b.disabled=true;b.textContent='جارٍ الإرسال…';const {data,error}=await sb.rpc('pitch_public_submit_booking',{p_venue:venue,p_date:ymd(date),p_hour:selected,p_span:span,p_name:name,p_phone:phone,p_details:$('details').value.trim()||null,p_sponsor_code:sponsors[0]?.id||null});if(error){b.disabled=false;b.textContent='إرسال طلب الحجز';if(String(error.message).includes('SLOT_TAKEN')){ev('slot_lost',selected);alert('الميعاد اتحجز حالًا. هنحدّث لك المواعيد المتاحة.');selected=null;$('form').style.display='none';await loadSlots();}else if(String(error.message).includes('CUSTOMER_BLOCKED'))alert('برجاء التواصل مع الإدارة لإتمام الحجز.');else {ev('booking_error',selected,null,{message:String(error.message||'error').slice(0,100)});alert('حصل خطأ، حاول تاني')}return}ev('booking_submitted',selected);$('main').innerHTML=`<section class="card success"><div class="ok">✅</div><h2>طلبك وصل يا ${name}!</h2><p>طلب <b>${DAYS[date.getDay()]} ${date.getDate()} ${MONTHS[date.getMonth()]}</b> الساعة <b>${fh(selected)}</b> اتسجل بسعر <b>${Number(data.price).toLocaleString()} جنيه</b>.</p><p class="muted">الإدارة هتراجع الطلب وتتواصل معاك لتأكيد الحجز.</p></section>`};
 boot().catch(e=>{console.error(e);$('slotStatus').textContent='حصل خطأ في التحميل. حدّث الصفحة.'});
-</script><a class="wa-float" href="https://wa.me/201557547497" target="_blank" rel="noopener noreferrer" aria-label="واتساب ملاعب كابتن بيبو"><svg viewBox="0 0 32 32"><path d="M19.11 17.45c-.29-.15-1.72-.85-1.99-.95-.27-.1-.47-.15-.67.15-.2.29-.76.95-.93 1.15-.17.2-.34.22-.64.07-.29-.15-1.24-.46-2.36-1.46-.87-.78-1.46-1.74-1.63-2.03-.17-.29-.02-.45.13-.6.13-.13.29-.34.44-.51.15-.17.2-.29.29-.49.1-.2.05-.37-.02-.51-.07-.15-.67-1.61-.91-2.2-.24-.58-.49-.5-.67-.51h-.57c-.2 0-.51.07-.78.37-.27.29-1.03 1-1.03 2.44s1.05 2.83 1.2 3.03c.15.2 2.06 3.15 5 4.42.7.3 1.24.48 1.67.61.7.22 1.33.19 1.83.12.56-.08 1.72-.7 1.96-1.39.24-.68.24-1.27.17-1.39-.07-.12-.27-.2-.56-.34M16.04 27h-.01a10.93 10.93 0 0 1-5.57-1.53l-.4-.24-4.14 1.09 1.1-4.04-.26-.41A10.93 10.93 0 1 1 16.04 27m9.3-20.34A13.06 13.06 0 0 0 16.03 2C8.82 2 2.96 7.86 2.96 15.07c0 2.3.6 4.55 1.74 6.53L2.85 28.4l6.96-1.83a13.04 13.04 0 0 0 6.22 1.58h.01c7.2 0 13.07-5.86 13.07-13.07 0-3.49-1.36-6.77-3.77-9.42"/></svg></a></body></html>
+</script><a id="locFloat" class="loc-float" target="_blank" rel="noopener noreferrer" aria-label="موقع الملعب" title="موقع الملعب">📍</a><a class="wa-float" href="https://wa.me/201557547497" target="_blank" rel="noopener noreferrer" aria-label="واتساب ملاعب كابتن بيبو"><svg viewBox="0 0 32 32"><path d="M19.11 17.45c-.29-.15-1.72-.85-1.99-.95-.27-.1-.47-.15-.67.15-.2.29-.76.95-.93 1.15-.17.2-.34.22-.64.07-.29-.15-1.24-.46-2.36-1.46-.87-.78-1.46-1.74-1.63-2.03-.17-.29-.02-.45.13-.6.13-.13.29-.34.44-.51.15-.17.2-.29.29-.49.1-.2.05-.37-.02-.51-.07-.15-.67-1.61-.91-2.2-.24-.58-.49-.5-.67-.51h-.57c-.2 0-.51.07-.78.37-.27.29-1.03 1-1.03 2.44s1.05 2.83 1.2 3.03c.15.2 2.06 3.15 5 4.42.7.3 1.24.48 1.67.61.7.22 1.33.19 1.83.12.56-.08 1.72-.7 1.96-1.39.24-.68.24-1.27.17-1.39-.07-.12-.27-.2-.56-.34M16.04 27h-.01a10.93 10.93 0 0 1-5.57-1.53l-.4-.24-4.14 1.09 1.1-4.04-.26-.41A10.93 10.93 0 1 1 16.04 27m9.3-20.34A13.06 13.06 0 0 0 16.03 2C8.82 2 2.96 7.86 2.96 15.07c0 2.3.6 4.55 1.74 6.53L2.85 28.4l6.96-1.83a13.04 13.04 0 0 0 6.22 1.58h.01c7.2 0 13.07-5.86 13.07-13.07 0-3.49-1.36-6.77-3.77-9.42"/></svg></a></body></html>
