@@ -25,13 +25,46 @@ body{background:radial-gradient(circle at 50% -10%,#183a26 0,#07130d 38%,#050b08
 .loc-float.show{display:flex}.loc-float:hover{transform:translateY(-2px)}
 @media(max-width:600px){.loc-float{right:18px;bottom:92px;width:54px;height:54px}}
 .ad-fallback{width:100%;min-height:120px;display:grid;place-items:center;background:#e8b23a;color:#111;font:900 34px Cairo;border-radius:14px}
+
+/* V5 operational-day decision UX */
+.card.schedule-card{background:#f7faf8;color:#10251a;border-color:#dbe7df}
+.schedule-card h2{color:#10251a}
+.schedule-card .chip{background:#fff;color:#173c28;border-color:#cbded1}
+.schedule-card .chip.on{background:#126b3c;color:#fff;border-color:#126b3c}
+.schedule-card .status{color:#63756a}
+.slots{grid-template-columns:repeat(3,minmax(0,1fr))}
+.slot{min-height:74px;background:#eef9f1!important;color:#123c25!important;border:1.5px solid #80c99b!important;box-shadow:none!important}
+.slot span{display:block;color:#123c25!important;font-weight:900;font-size:1.02rem}
+.slot small{color:#287344!important;font-weight:800}
+.slot.off{opacity:1!important;background:#ecefed!important;border-color:#d4d9d5!important;color:#858d88!important;cursor:pointer}
+.slot.off span{color:#7f8882!important;text-decoration:line-through;text-decoration-thickness:1px}
+.slot.off small{color:#929994!important}
+.slot.on{background:#126b3c!important;border-color:#126b3c!important}
+.slot.on span,.slot.on small{color:#fff!important;text-decoration:none}
+.op-day-note{font-size:.76rem;color:#6a786f;margin:8px 1px 12px;line-height:1.6}
+.slot-period{grid-column:1/-1;font:800 .78rem Cairo;color:#607168;padding:6px 2px 0}
+@media(max-width:380px){.slots{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+/* V6 revenue recovery layer */
+.recovery{margin-top:12px;padding:12px;border:1px solid #d8e5dc;border-radius:14px;background:#fff;color:#183526}
+.recovery:empty{display:none}.recovery-title{font-weight:900;margin-bottom:7px}
+.alt-row{display:flex;gap:7px;overflow:auto;padding:2px 0}.alt-btn{white-space:nowrap;border:1px solid #80c99b;background:#eef9f1;color:#164c2c;border-radius:10px;padding:9px 11px;font-weight:800}
+.interest-btn{width:100%;margin-top:9px;border:1px dashed #9eaaa2;background:#f5f6f5;color:#425047;border-radius:10px;padding:10px;font-weight:800}
+.interest-btn.done{border-style:solid;background:#edf7f0;color:#23643b}
+.avail-count{font-size:.8rem;color:#607168;margin:7px 0 0}
+
+/* V7 conversion polish */
+.recovery .next-day{margin-top:8px;border-top:1px solid #e3ebe6;padding-top:9px}
+.next-btn{width:100%;border:0;background:#173f2a;color:#fff;border-radius:10px;padding:10px;font-weight:900}
+.booking-trust{display:flex;gap:7px;flex-wrap:wrap;margin:8px 0 12px}.trust-pill{font-size:.75rem;background:#eef5f0;color:#355a43;padding:5px 8px;border-radius:999px}
+.form-title-sub{margin:-5px 0 10px;color:#6b786f;font-size:.8rem}
 </style></head><body>
 <header class="hero"><div class="brand">⚽ ملاعب كابتن بيبو</div><p>اختار ملعبك وميعادك في أقل من دقيقة</p></header>
 <main class="wrap" id="main">
 <div id="sponsorHero" class="adzone"></div>
 <section class="card"><h2>🏟️ الملعب</h2><div class="venues" id="venues"></div><div id="venueLocation" style="display:none"></div></section>
-<section class="card"><h2>📅 اختار اليوم</h2><div class="days" id="days"></div><div id="slotStatus" class="status">جارٍ تحميل المواعيد…</div><div class="slots" id="slots"></div></section>
-<div id="sponsorMid" class="adzone"></div><section class="card" id="form" style="display:none"><h2>✓ ثبّت طلبك</h2><div class="summary" id="summary"></div>
+<section class="card schedule-card"><h2>📅 اختار اليوم التشغيلي</h2><div class="op-day-note">اليوم التشغيلي يبدأ 6 صباحًا وينتهي 5:59 صباح اليوم التالي — مواعيد بعد منتصف الليل ستظهر مع نفس يوم التشغيل.</div><div class="days" id="days"></div><div id="slotStatus" class="status">جارٍ تحميل المواعيد…</div><div class="slots" id="slots"></div><div id="recovery" class="recovery"></div></section>
+<div id="sponsorMid" class="adzone"></div><section class="card" id="form" style="display:none"><h2>✓ ثبّت طلبك</h2><div class="form-title-sub">خطوة أخيرة — الاسم والموبايل فقط.</div><div class="booking-trust"><span class="trust-pill">🔒 بدون دفع الآن</span><span class="trust-pill">⚡ الطلب في أقل من دقيقة</span></div><div class="summary" id="summary"></div>
 <label>مدة الحجز</label><select id="duration"></select>
 <label>الاسم</label><input id="name" autocomplete="name" placeholder="اسمك">
 <label>رقم الموبايل</label><input id="phone" inputmode="numeric" autocomplete="tel" placeholder="01xxxxxxxxx">
@@ -81,13 +114,69 @@ async function boot(){
 }
 function renderVenues(){$('venues').innerHTML=venues.map(v=>`<button class="chip ${v.id===venue?'on':''}" data-v="${v.id}">⚽ ${v.name}</button>`).join('');document.querySelectorAll('[data-v]').forEach(b=>b.onclick=async()=>{venue=b.dataset.v;selected=null;$('form').style.display='none';renderVenues();ev('venue_view');const r=await sb.rpc('pitch_public_booking_config',{p_venue:venue});if(!r.error){sponsors=r.data.sponsors||[];showVenueLocation(r.data.selected_venue)}renderSponsors();await loadSlots()})}
 function renderDays(){let a=[];for(let i=0;i<15;i++){let d=new Date();d.setHours(12,0,0,0);d.setDate(d.getDate()+i);a.push(`<button class="chip ${ymd(d)===ymd(date)?'on':''}" data-date="${ymd(d)}">${i===0?'اليوم':i===1?'بكرة':DAYS[d.getDay()]}<br><small>${d.getDate()} ${MONTHS[d.getMonth()]}</small></button>`)}$('days').innerHTML=a.join('');document.querySelectorAll('[data-date]').forEach(b=>b.onclick=()=>{date=new Date(b.dataset.date+'T12:00:00');selected=null;$('form').style.display='none';renderDays();ev('date_view');loadSlots()})}
-async function loadSlots(){$('slotStatus').style.display='block';$('slots').innerHTML='';const {data,error}=await sb.rpc('pitch_public_availability',{p_venue:venue,p_date:ymd(date)});if(error){$('slotStatus').textContent='تعذر تحميل المواعيد';return}slots=data.slots||[];$('slotStatus').style.display=slots.length?'none':'block';renderSlots()}
-function renderSlots(){$('slots').innerHTML=slots.map(s=>`<button class="slot ${!s.available?'off':selected===s.hour?'on':''}" data-h="${s.hour}" ${!s.available?'disabled':''}><span>${fh(s.hour)}</span><small>${s.available?Number(s.price).toLocaleString()+' ج':'محجوز'}</small></button>`).join('');document.querySelectorAll('.slot:not(.off)').forEach(b=>b.onclick=()=>choose(Number(b.dataset.h)));}
-function freeSpan(h){let n=0;for(let x=h;x<h+6;x++){const s=slots.find(z=>z.hour===x);if(!s||!s.available)break;n++}return n}
-function choose(h){selected=h;ev('slot_selected',h);renderSlots();const mx=freeSpan(h);$('duration').innerHTML=Array.from({length:mx},(_,i)=>`<option value="${i+1}">${i+1} ساعة</option>`).join('');$('duration').value=1;$('form').style.display='block';ev('booking_started',h);updateSummary();$('form').scrollIntoView({behavior:'smooth',block:'start'})}
-function updateSummary(){if(selected===null)return;const span=Number($('duration').value||1);let total=0;for(let h=selected;h<selected+span;h++)total+=Number(slots.find(s=>s.hour===h)?.price||0);const vn=venues.find(v=>v.id===venue)?.name||venue;$('summary').innerHTML=`<b>${vn}</b><br>${DAYS[date.getDay()]} ${date.getDate()} ${MONTHS[date.getMonth()]} · ${fh(selected)} → ${fh(selected+span)}<br><b style="color:var(--gold)">${total.toLocaleString()} جنيه</b>`}
+async function loadSlots(){
+ $('slotStatus').style.display='block';$('slotStatus').textContent='جارٍ تحميل مواعيد اليوم التشغيلي…';$('slots').innerHTML='';
+ const next=new Date(date);next.setDate(next.getDate()+1);
+ const [a,b]=await Promise.all([
+   sb.rpc('pitch_public_availability',{p_venue:venue,p_date:ymd(date)}),
+   sb.rpc('pitch_public_availability',{p_venue:venue,p_date:ymd(next)})
+ ]);
+ if(a.error||b.error){$('slotStatus').textContent='تعذر تحميل المواعيد';return}
+ const first=(a.data?.slots||[]).filter(x=>Number(x.hour)>=6).map(x=>({...x,calendar_date:ymd(date),op_hour:Number(x.hour)}));
+ const after=(b.data?.slots||[]).filter(x=>Number(x.hour)<6).map(x=>({...x,calendar_date:ymd(next),op_hour:Number(x.hour)+24}));
+ slots=[...first,...after].sort((x,y)=>x.op_hour-y.op_hour);
+ $('slotStatus').style.display=slots.length?'none':'block';
+ renderSlots();
+}
+function renderSlots(){
+ let lastPeriod='';
+ $('slots').innerHTML=slots.map(s=>{
+   const period=s.op_hour<18?'نهار':s.op_hour<24?'مساء':'بعد منتصف الليل';
+   const head=period!==lastPeriod?`<div class="slot-period">${period==='نهار'?'☀️':period==='مساء'?'🌙':'🌘'} ${period}</div>`:'';
+   lastPeriod=period;
+   return head+`<button class="slot ${!s.available?'off':selected===s.op_hour?'on':''}" data-h="${s.op_hour}" aria-disabled="${!s.available?'true':'false'}"><span>${fh(Number(s.hour))}</span><small>${s.available?Number(s.price).toLocaleString()+' ج':'محجوز'}</small></button>`;
+ }).join('');
+ document.querySelectorAll('.slot').forEach(b=>b.onclick=()=>{
+   const h=Number(b.dataset.h),x=slots.find(z=>z.op_hour===h);
+   if(x?.available)choose(h); else showRecovery(h,true);
+ });
+ showRecovery(null,false);
+}
+function nearestAvailable(h=null,limit=4){
+ const available=slots.filter(x=>x.available);
+ if(h===null)return available.slice(0,limit);
+ return available.sort((a,b)=>Math.abs(a.op_hour-h)-Math.abs(b.op_hour-h)).slice(0,limit);
+}
+function showRecovery(wanted=null,explicit=false){
+ const host=$('recovery');if(!host)return;
+ const free=nearestAvailable(wanted,4);
+ if(!explicit){
+   const n=slots.filter(x=>x.available).length;
+   host.innerHTML=n?`<div class="avail-count">متاح ${n} موعد في اليوم التشغيلي</div>`:`<div class="recovery-title">مفيش موعد متاح في اليوم التشغيلي ده</div><div class="muted">نكمل الرحلة بدل ما تبدأ من الأول.</div><div class="next-day"><button class="next-btn" id="nextDayBtn">شوف اليوم التشغيلي التالي ←</button></div>`;if(!n&&$('nextDayBtn'))$('nextDayBtn').onclick=showNextOperatingDay;
+   return;
+ }
+ const x=slots.find(z=>z.op_hour===wanted);
+ const alts=free.map(a=>`<button class="alt-btn" data-alt="${a.op_hour}">${fh(Number(a.hour))} · ${Number(a.price).toLocaleString()} ج</button>`).join('');
+ host.innerHTML=`<div class="recovery-title">⏰ ${x?fh(Number(x.hour)):'الميعاد'} محجوز</div><div class="muted">بدل ما نوقف الرحلة، دي أقرب مواعيد متاحة:</div><div class="alt-row">${alts||'<span class="muted">لا يوجد بديل متاح في نفس اليوم التشغيلي.</span>'}</div>${alts?'':'<div class="next-day"><button class="next-btn" id="nextDayBtn">شوف اليوم التشغيلي التالي ←</button></div>'}<button class="interest-btn" id="interestBtn">🔔 مهتم بالميعاد لو فضي</button>`;
+ host.querySelectorAll('[data-alt]').forEach(b=>b.onclick=()=>choose(Number(b.dataset.alt)));
+ const nb=$('nextDayBtn');if(nb)nb.onclick=showNextOperatingDay;const ib=$('interestBtn');if(ib)ib.onclick=()=>captureInterest(wanted,ib);
+ host.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+async function showNextOperatingDay(){
+ const next=new Date(date);next.setDate(next.getDate()+1);
+ date=next;selected=null;$('form').style.display='none';renderDays();ev('date_view');await loadSlots();
+ $('slots').scrollIntoView({behavior:'smooth',block:'start'});
+}
+function captureInterest(opHour,btn){
+ const x=slots.find(z=>z.op_hour===opHour);if(!x)return;
+ ev('unavailable_interest',Number(x.hour),null,{calendar_date:x.calendar_date,operating_day:ymd(date),source:'booked_slot'});
+ btn.disabled=true;btn.classList.add('done');btn.textContent='✓ سجلنا اهتمامك';
+}
+function freeSpan(h){let n=0;for(let x=h;x<h+6;x++){const s=slots.find(z=>z.op_hour===x);if(!s||!s.available)break;n++}return n}
+function choose(h){selected=h;const chosen=slots.find(x=>x.op_hour===h);ev('slot_selected',chosen?Number(chosen.hour):h);renderSlots();const mx=freeSpan(h);$('duration').innerHTML=Array.from({length:mx},(_,i)=>`<option value="${i+1}">${i+1} ساعة</option>`).join('');$('duration').value=1;$('form').style.display='block';ev('booking_started',h);updateSummary();$('form').scrollIntoView({behavior:'smooth',block:'start'})}
+function updateSummary(){if(selected===null)return;const span=Number($('duration').value||1);let total=0;for(let h=selected;h<selected+span;h++)total+=Number(slots.find(s=>s.op_hour===h)?.price||0);const vn=venues.find(v=>v.id===venue)?.name||venue;$('summary').innerHTML=`<b>${vn}</b><br>${DAYS[date.getDay()]} ${date.getDate()} ${MONTHS[date.getMonth()]} · ${fh(selected%24)} → ${fh((selected+span)%24)}<br><b style="color:var(--gold)">${total.toLocaleString()} جنيه</b>`}
 $('duration').onchange=updateSummary;
 $('phone').oninput=e=>e.target.value=e.target.value.replace(/\D/g,'').slice(0,15);
-$('submit').onclick=async()=>{const name=$('name').value.trim(),phone=normPhone($('phone').value),span=Number($('duration').value||1);if(!name)return alert('اكتب اسمك');if(!/^01\d{9}$/.test(phone))return alert('راجع رقم الموبايل');const b=$('submit');b.disabled=true;b.textContent='جارٍ الإرسال…';const {data,error}=await sb.rpc('pitch_public_submit_booking',{p_venue:venue,p_date:ymd(date),p_hour:selected,p_span:span,p_name:name,p_phone:phone,p_details:$('details').value.trim()||null,p_sponsor_code:sponsors[0]?.id||null});if(error){b.disabled=false;b.textContent='إرسال طلب الحجز';if(String(error.message).includes('SLOT_TAKEN')){ev('slot_lost',selected);alert('الميعاد اتحجز حالًا. هنحدّث لك المواعيد المتاحة.');selected=null;$('form').style.display='none';await loadSlots();}else if(String(error.message).includes('CUSTOMER_BLOCKED'))alert('برجاء التواصل مع الإدارة لإتمام الحجز.');else {ev('booking_error',selected,null,{message:String(error.message||'error').slice(0,100)});alert('حصل خطأ، حاول تاني')}return}ev('booking_submitted',selected);$('main').innerHTML=`<section class="card success"><div class="ok">✅</div><h2>طلبك وصل يا ${name}!</h2><p>طلب <b>${DAYS[date.getDay()]} ${date.getDate()} ${MONTHS[date.getMonth()]}</b> الساعة <b>${fh(selected)}</b> اتسجل بسعر <b>${Number(data.price).toLocaleString()} جنيه</b>.</p><p class="muted">الإدارة هتراجع الطلب وتتواصل معاك لتأكيد الحجز.</p></section>`};
+$('submit').onclick=async()=>{const name=$('name').value.trim(),phone=normPhone($('phone').value),span=Number($('duration').value||1);if(!name)return alert('اكتب اسمك');if(!/^01\d{9}$/.test(phone))return alert('راجع رقم الموبايل');const b=$('submit');b.disabled=true;b.textContent='جارٍ الإرسال…';const chosen=slots.find(x=>x.op_hour===selected);if(!chosen){b.disabled=false;b.textContent='إرسال طلب الحجز';return alert('اختار ميعاد متاح');}const {data,error}=await sb.rpc('pitch_public_submit_booking',{p_venue:venue,p_date:chosen.calendar_date,p_hour:Number(chosen.hour),p_span:span,p_name:name,p_phone:phone,p_details:$('details').value.trim()||null,p_sponsor_code:sponsors[0]?.id||null});if(error){b.disabled=false;b.textContent='إرسال طلب الحجز';if(String(error.message).includes('SLOT_TAKEN')){ev('slot_lost',selected);alert('الميعاد اتحجز حالًا. هنحدّث لك المواعيد المتاحة.');selected=null;$('form').style.display='none';await loadSlots();}else if(String(error.message).includes('CUSTOMER_BLOCKED'))alert('برجاء التواصل مع الإدارة لإتمام الحجز.');else {ev('booking_error',selected,null,{message:String(error.message||'error').slice(0,100)});alert('حصل خطأ، حاول تاني')}return}ev('booking_submitted',selected);$('main').innerHTML=`<section class="card success"><div class="ok">✅</div><h2>طلبك وصل يا ${name}!</h2><p>طلب <b>${DAYS[date.getDay()]} ${date.getDate()} ${MONTHS[date.getMonth()]}</b> الساعة <b>${fh(selected)}</b> اتسجل بسعر <b>${Number(data.price).toLocaleString()} جنيه</b>.</p><p class="muted">الإدارة هتراجع الطلب وتتواصل معاك لتأكيد الحجز.</p></section>`};
 boot().catch(e=>{console.error(e);$('slotStatus').textContent='حصل خطأ في التحميل. حدّث الصفحة.'});
 </script><a id="locFloat" class="loc-float" target="_blank" rel="noopener noreferrer" aria-label="موقع الملعب" title="موقع الملعب">📍</a><a class="wa-float" href="https://wa.me/201557547497" target="_blank" rel="noopener noreferrer" aria-label="واتساب ملاعب كابتن بيبو"><svg viewBox="0 0 32 32"><path d="M19.11 17.45c-.29-.15-1.72-.85-1.99-.95-.27-.1-.47-.15-.67.15-.2.29-.76.95-.93 1.15-.17.2-.34.22-.64.07-.29-.15-1.24-.46-2.36-1.46-.87-.78-1.46-1.74-1.63-2.03-.17-.29-.02-.45.13-.6.13-.13.29-.34.44-.51.15-.17.2-.29.29-.49.1-.2.05-.37-.02-.51-.07-.15-.67-1.61-.91-2.2-.24-.58-.49-.5-.67-.51h-.57c-.2 0-.51.07-.78.37-.27.29-1.03 1-1.03 2.44s1.05 2.83 1.2 3.03c.15.2 2.06 3.15 5 4.42.7.3 1.24.48 1.67.61.7.22 1.33.19 1.83.12.56-.08 1.72-.7 1.96-1.39.24-.68.24-1.27.17-1.39-.07-.12-.27-.2-.56-.34M16.04 27h-.01a10.93 10.93 0 0 1-5.57-1.53l-.4-.24-4.14 1.09 1.1-4.04-.26-.41A10.93 10.93 0 1 1 16.04 27m9.3-20.34A13.06 13.06 0 0 0 16.03 2C8.82 2 2.96 7.86 2.96 15.07c0 2.3.6 4.55 1.74 6.53L2.85 28.4l6.96-1.83a13.04 13.04 0 0 0 6.22 1.58h.01c7.2 0 13.07-5.86 13.07-13.07 0-3.49-1.36-6.77-3.77-9.42"/></svg></a></body></html>
