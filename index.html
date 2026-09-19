@@ -137,6 +137,32 @@ details summary{cursor:pointer;color:var(--chalk-dim);margin-top:10px;font-size:
 .interest-box input{margin-top:7px}
 .interest-actions{display:flex;gap:7px;margin-top:8px}.interest-actions button{flex:1;border:0;border-radius:9px;padding:10px;font:800 .82rem var(--font);cursor:pointer}
 .interest-save{background:var(--turf);color:#fff}.interest-cancel{background:var(--slot);color:var(--chalk)}
+
+/* V9 Conversion & Confidence */
+.venue-info{display:none;margin:10px 0 0;padding:11px 12px;border:1px solid var(--lane);border-radius:12px;background:var(--night)}
+.venue-info.show{display:block}.venue-info b{display:block;font-family:var(--display);font-size:.88rem}.venue-info span{display:block;color:var(--chalk-dim);font-size:.76rem;line-height:1.6;margin-top:3px}
+.confidence{margin:14px 0;padding:12px;border:1px solid var(--booked);border-radius:12px;background:rgba(232,178,58,.08);text-align:right}
+.confidence b{display:block;color:var(--booked);font-family:var(--display);font-size:1rem}.confidence span{font-size:.78rem;color:var(--chalk-dim);line-height:1.7}
+.success-actions{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:15px}.success-actions .btn{margin:0}.btn.secondary{background:var(--slot);border:1px solid var(--turf-line)}.btn.share{background:#1f6d46}
+.remember-note{font-size:.7rem;color:var(--chalk-dim);margin-top:5px}
+@media(max-width:420px){.success-actions{grid-template-columns:1fr}}
+
+
+/* V10 Sponsor Commercial Engine — premium inventory, still clearly disclosed */
+.partner-zone{margin:14px 0}.partner-zone:empty{display:none}
+.partner-label{display:flex;align-items:center;justify-content:space-between;margin:0 2px 7px;color:var(--chalk-dim);font-size:.7rem}
+.partner-hero{position:relative;display:block;overflow:hidden;min-height:190px;border:1px solid #ffffff24;border-radius:18px;background:linear-gradient(135deg,var(--panel),var(--night));color:var(--chalk);text-decoration:none;box-shadow:0 10px 30px #0003}
+.partner-hero .media{width:100%;height:190px;object-fit:cover;display:block;opacity:.78}
+.partner-hero .shade{position:absolute;inset:0;background:linear-gradient(0deg,rgba(5,15,9,.94) 0%,rgba(5,15,9,.3) 60%,rgba(5,15,9,.08) 100%)}
+.partner-hero .content{position:absolute;right:15px;left:15px;bottom:14px;display:grid;grid-template-columns:1fr auto;gap:12px;align-items:end}
+.partner-hero .brandline{display:flex;align-items:center;gap:9px;margin-bottom:5px}.partner-hero .logo{width:42px;height:42px;border-radius:10px;object-fit:cover;background:#fff}.partner-hero h3{font:900 1.05rem var(--display);margin:0}.partner-hero p{font-size:.78rem;color:#e7eee9;line-height:1.55;margin:2px 0 0}
+.partner-cta{background:var(--booked);color:#111;padding:10px 12px;border-radius:10px;font:900 .76rem var(--display);white-space:nowrap}
+.partner-badge{position:absolute;top:10px;left:10px;background:rgba(0,0,0,.68);color:#fff;padding:4px 8px;border-radius:8px;font-size:.62rem;font-weight:800}
+.partner-strip{display:flex;align-items:center;gap:12px;padding:13px;border:1px solid #ffffff24;border-radius:15px;background:var(--panel);color:var(--chalk);text-decoration:none;box-shadow:0 7px 22px #0002}
+.partner-strip img{width:64px;height:64px;border-radius:12px;object-fit:cover;background:#fff}.partner-strip .copy{flex:1;min-width:0}.partner-strip b{font:900 .9rem var(--display);display:block}.partner-strip small{color:var(--chalk-dim);display:block;line-height:1.5;margin-top:3px}.partner-strip .partner-cta{flex:0 0 auto}
+.post-partner{margin-top:18px;text-align:right}.post-partner .partner-hero{min-height:170px}.post-partner .partner-hero .media{height:170px}
+@media(max-width:430px){.partner-hero{min-height:205px}.partner-hero .media{height:205px}.partner-hero .content{grid-template-columns:1fr}.partner-cta{text-align:center}.partner-strip{align-items:flex-start}.partner-strip .partner-cta{display:none}}
+
 </style></head><body>
 
 <header class="hero"><div class="brand">⚽ ملاعب كابتن بيبو</div><p>اختار ملعبك وميعادك في أقل من دقيقة</p></header>
@@ -144,9 +170,9 @@ details summary{cursor:pointer;color:var(--chalk-dim);margin-top:10px;font-size:
 <main class="wrap" id="main">
 
   <!-- Ad slot 1: hero rail — small cards, clearly tagged, above the fold but not blocking the flow -->
-  <div id="adHero" class="adzone"></div>
+  <div id="adHero" class="partner-zone"></div>
 
-  <section class="card"><h2>🏟️ الملعب</h2><div class="venues" id="venues"></div><div id="venueLocation" style="display:none"></div></section>
+  <section class="card"><h2>🏟️ الملعب</h2><div class="venues" id="venues"></div><div class="venue-info" id="venueInfo"></div><div id="venueLocation" style="display:none"></div></section>
 
   <section class="card"><h2>📅 اختار اليوم التشغيلي</h2>
     <p class="section-note">اليوم التشغيلي يبدأ 6 صباحًا وينتهي 5:59 صباح اليوم التالي — مواعيد بعد منتصف الليل بتظهر مع نفس يوم التشغيل.</p>
@@ -157,7 +183,7 @@ details summary{cursor:pointer;color:var(--chalk-dim);margin-top:10px;font-size:
   </section>
 
   <!-- Ad slot 2: strip — between decision (day/slot) and commitment (form), one item, low-friction -->
-  <div id="adMid" class="adzone"></div>
+  <div id="adMid" class="partner-zone"></div>
 
   <section class="card" id="form" style="display:none">
     <h2>✓ ثبّت طلبك</h2>
@@ -165,15 +191,15 @@ details summary{cursor:pointer;color:var(--chalk-dim);margin-top:10px;font-size:
     <div class="booking-trust"><span class="trust-pill">🔒 بدون دفع دلوقتي</span><span class="trust-pill">⚡ الطلب في أقل من دقيقة</span></div>
     <div class="summary" id="summary"></div>
     <label>مدة الحجز</label><select id="duration"></select>
-    <label>الاسم</label><input id="name" autocomplete="name" placeholder="اسمك">
-    <label>رقم الموبايل</label><input id="phone" inputmode="numeric" autocomplete="tel" placeholder="01xxxxxxxxx">
+    <div class="confidence"><b>⏳ ده طلب حجز — مش تأكيد نهائي لسه</b><span>بعد الإرسال هنستلم طلبك، والإدارة هتراجعه. الحجز يبقى مؤكد فقط بعد موافقة الملعب.</span></div><label>الاسم</label><input id="name" autocomplete="name" placeholder="اسمك">
+    <label>رقم الموبايل</label><input id="phone" inputmode="numeric" autocomplete="tel" placeholder="01xxxxxxxxx"><div class="remember-note">هنحفظ الاسم والرقم على جهازك لتسريع الحجز الجاي.</div>
     <details><summary>+ عندك ملاحظة؟</summary><textarea id="details" placeholder="اكتبها هنا"></textarea></details>
     <button class="btn" id="submit">إرسال طلب الحجز</button>
     <p class="muted" style="margin-top:8px">الطلب بيتراجع من الإدارة، والحجز يتأكد بعد التواصل معاك.</p>
   </section>
 
   <!-- Ad slot 3: footer rail — after commitment, small, doesn't interrupt anything -->
-  <div id="adFooter" class="adzone"></div>
+  <div id="adFooter" class="partner-zone"></div>
 
 </main>
 
@@ -187,9 +213,9 @@ const SUPABASE_URL='https://bmpzccaoxufkdtunppbc.supabase.co',SUPABASE_KEY='sb_p
 const sb=supabase.createClient(SUPABASE_URL,SUPABASE_KEY),$=x=>document.getElementById(x);
 const Q=new URLSearchParams(location.search),VISIT=sessionStorage.cb_visit_id||(sessionStorage.cb_visit_id=(crypto.randomUUID?crypto.randomUUID():'v'+Date.now()+Math.random().toString(36).slice(2)));
 const ATTR={referrer:document.referrer||null,source:Q.get('utm_source'),medium:Q.get('utm_medium'),campaign:Q.get('utm_campaign')};
-try{lastClickedSponsor=sessionStorage.cb_last_sponsor||null}catch{}
 const DAYS=['الأحد','الإثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'],MONTHS=['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
-let venues=[],venue=null,date=new Date(),slots=[],selected=null,sponsors=[],lastClickedSponsor=null;
+let venues=[],venue=null,date=new Date(),slots=[],selected=null,sponsors=[],lastClickedSponsor=null,selectedVenueInfo=null;
+try{lastClickedSponsor=sessionStorage.cb_last_sponsor||null}catch{}
 const ymd=d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
 const dk=d=>`${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
 const fh=h=>`${h%12||12}:00 ${h>=12&&h<24?'م':'ص'}`;
@@ -201,45 +227,56 @@ function normPhone(v){let p=String(v||'').replace(/\D/g,'');if(p.startsWith('002
    - mid placement  -> one compact strip (single item, minimal interruption)
    - footer placement -> small rail again, after the form so it never delays commitment
    Falls back to a lettered tile (no broken-image look) if an ad has no image. */
-function adFallback(name){return `<div class="ad-fallback-icon">${String(name||'S').slice(0,1).replace(/[<>&]/g,'')}</div>`;}
-function adCard(x){
-  const media=x.image_url||x.logo_url;
-  return `<a class="ad-card" href="${x.url}" target="_blank" rel="noopener noreferrer" data-sp="${x.id}" data-place="hero">
-    <span class="ad-tag">إعلان</span>
-    ${media?`<img src="${media}" alt="${x.name||'Sponsor'}" referrerpolicy="no-referrer" onerror="this.outerHTML=adFallback('${String(x.name||'S').replace(/'/g,"")}')">`:adFallback(x.name)}
-    <b>${x.name||''}</b>
-  </a>`;
+function safeUrl(v){return /^https:\/\//i.test(String(v||''))?String(v):'#'}
+function sponsorMedia(x){return safeUrl(x.image_url||x.logo_url)==='#'?'':safeUrl(x.image_url||x.logo_url)}
+function sponsorLogo(x){return safeUrl(x.logo_url)==='#'?'':safeUrl(x.logo_url)}
+function premiumSponsor(x,place='hero'){
+ const media=sponsorMedia(x),logo=sponsorLogo(x),name=esc(x.name||'راعي كابتن بيبو'),copy=esc(x.copy||'عرض خاص لعملاء ملاعب كابتن بيبو'),cta=esc(x.cta||'استفد من العرض');
+ return `<a class="partner-hero" href="${safeUrl(x.url)}" target="_blank" rel="noopener noreferrer" data-sp="${esc(x.id)}" data-place="${place}">
+   ${media?`<img class="media" src="${media}" alt="${name}" referrerpolicy="no-referrer">`:''}<div class="shade"></div><span class="partner-badge">إعلان · شريك كابتن بيبو</span>
+   <div class="content"><div><div class="brandline">${logo?`<img class="logo" src="${logo}" alt="">`:''}<h3>${name}</h3></div><p>${copy}</p></div><span class="partner-cta">${cta} ↗</span></div></a>`;
 }
-function adStrip(x,place){
-  const media=x.image_url||x.logo_url;
-  return `<a class="ad-strip" href="${x.url}" target="_blank" rel="noopener noreferrer" data-sp="${x.id}" data-place="${place}">
-    <span class="ad-tag" style="position:static;flex:0 0 auto">إعلان</span>
-    ${media?`<img src="${media}" alt="${x.name||'Sponsor'}" referrerpolicy="no-referrer" onerror="this.outerHTML=adFallback('${String(x.name||'S').replace(/'/g,"")}')">`:adFallback(x.name)}
-    <span class="copy"><b>${x.name||''}</b><span>${x.copy||''}</span></span>
-    <span class="go">${x.cta||'اعرف أكتر'} ↗</span>
-  </a>`;
+function compactSponsor(x,place='mid'){
+ const media=sponsorLogo(x)||sponsorMedia(x),name=esc(x.name||''),copy=esc(x.copy||''),cta=esc(x.cta||'اعرف أكتر');
+ return `<a class="partner-strip" href="${safeUrl(x.url)}" target="_blank" rel="noopener noreferrer" data-sp="${esc(x.id)}" data-place="${place}">${media?`<img src="${media}" alt="${name}" referrerpolicy="no-referrer">`:''}<span class="copy"><b>برعاية ${name}</b><small>${copy}</small></span><span class="partner-cta">${cta} ↗</span></a>`;
+}
+function bindSponsorClicks(root=document){
+ root.querySelectorAll('[data-sp]').forEach(a=>a.onclick=()=>{lastClickedSponsor=a.dataset.sp||null;try{sessionStorage.cb_last_sponsor=lastClickedSponsor||''}catch{}ev('sponsor_click',null,a.dataset.sp,{placement:a.dataset.place});});
+}
+function pickSponsor(place,exclude=[]){
+ const explicit=sponsors.filter(x=>x.placement===place&&!exclude.includes(x.id));
+ const auto=sponsors.filter(x=>x.placement==='auto'&&!exclude.includes(x.id));
+ return (explicit[0]||auto[0]||null);
 }
 function renderSponsors(){
-  ['adHero','adMid','adFooter'].forEach(id=>$(id).innerHTML='');
-  if(!sponsors.length)return;
-  // hero: up to 4 small cards in a scrollable rail — more ad inventory, smaller footprint each
-  const heroSet=sponsors.filter(x=>x.placement==='hero'||x.placement==='auto').slice(0,4);
-  if(heroSet.length){
-    $('adHero').innerHTML=`<div class="ad-section-label">🎗️ برعاية</div><div class="ad-rail">${heroSet.map(adCard).join('')}</div>`;
-    heroSet.forEach(x=>ev('sponsor_impression',null,x.id,{placement:'hero'}));
-  }
-  // mid: single strip, right before the commitment step
-  const midX=sponsors.find(x=>x.placement==='mid')||sponsors.find(x=>x.placement==='auto'&&!heroSet.includes(x));
-  if(midX){$('adMid').innerHTML=adStrip(midX,'mid');ev('sponsor_impression',null,midX.id,{placement:'mid'});}
-  // footer: small rail again from whatever's left, so more sponsors get shown overall without
-  // any single placement feeling crowded
-  const used=new Set([...heroSet.map(x=>x.id),midX?midX.id:null]);
-  const footerSet=sponsors.filter(x=>!used.has(x.id)).slice(0,3);
-  if(footerSet.length){
-    $('adFooter').innerHTML=`<div class="ad-section-label">🎗️ برعاية</div><div class="ad-rail">${footerSet.map(adCard).join('')}</div>`;
-    footerSet.forEach(x=>ev('sponsor_impression',null,x.id,{placement:'footer'}));
-  }
-  document.querySelectorAll('[data-sp]').forEach(a=>a.onclick=()=>{lastClickedSponsor=a.dataset.sp||null;try{sessionStorage.cb_last_sponsor=lastClickedSponsor||''}catch{}ev('sponsor_click',null,a.dataset.sp,{placement:a.dataset.place});});
+ ['adHero','adMid','adFooter'].forEach(id=>$(id).innerHTML='');if(!sponsors.length)return;
+ const hero=pickSponsor('hero');const used=hero?[hero.id]:[];
+ if(hero){$('adHero').innerHTML=`<div class="partner-label"><span>🎗️ الشريك الرئيسي</span><span>إعلان</span></div>${premiumSponsor(hero,'hero')}`;ev('sponsor_impression',null,hero.id,{placement:'hero',format:'premium'});}
+ const mid=pickSponsor('mid',used);if(mid){used.push(mid.id);$('adMid').innerHTML=`<div class="partner-label"><span>عرض من أحد شركائنا</span><span>إعلان</span></div>${compactSponsor(mid,'mid')}`;ev('sponsor_impression',null,mid.id,{placement:'mid',format:'strip'});}
+ const foot=pickSponsor('footer',used);if(foot){$('adFooter').innerHTML=`<div class="partner-label"><span>شريك كابتن بيبو</span><span>إعلان</span></div>${compactSponsor(foot,'footer')}`;ev('sponsor_impression',null,foot.id,{placement:'footer',format:'strip'});}
+ bindSponsorClicks();
+}
+function postBookingSponsor(){
+ if(!sponsors.length)return '';
+ const x=pickSponsor('footer')||pickSponsor('hero')||sponsors[0];if(!x)return '';
+ setTimeout(()=>{ev('sponsor_impression',null,x.id,{placement:'post_booking',format:'premium'});bindSponsorClicks(document)},0);
+ return `<div class="post-partner"><div class="partner-label"><span>🎁 عرض بعد الحجز</span><span>إعلان</span></div>${premiumSponsor(x,'post_booking')}</div>`;
+}
+
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function restoreCustomer(){
+ try{const x=JSON.parse(localStorage.getItem('cb_customer')||'{}');if(x.name)$('name').value=String(x.name).slice(0,80);if(x.phone)$('phone').value=String(x.phone).replace(/\D/g,'').slice(0,15)}catch{}
+}
+function rememberCustomer(name,phone){try{localStorage.setItem('cb_customer',JSON.stringify({name:String(name).slice(0,80),phone:String(phone).slice(0,15)}))}catch{}}
+function renderVenueInfo(){
+ const v=selectedVenueInfo||venues.find(x=>x.id===venue)||{};const box=$('venueInfo');if(!box)return;
+ const address=v.address||'';box.innerHTML=`<b>⚽ ${esc(v.name||'الملعب')}</b><span>${address?'📍 '+esc(address):'اختار اليوم والميعاد المناسب، وموقع الملعب متاح من زر الخريطة.'}</span>`;box.classList.add('show');
+}
+function resetForRebook(){
+ selected=null;$('main').querySelector('.success')?.remove();location.reload();
+}
+async function shareBooking(text){
+ try{if(navigator.share){await navigator.share({title:'ملاعب كابتن بيبو',text,url:location.href});return}await navigator.clipboard.writeText(text+' '+location.href);alert('اتنسخت تفاصيل الحجز — ابعتها لصحابك على واتساب.')}catch{}
 }
 
 function showVenueLocation(sv){
@@ -252,15 +289,15 @@ async function boot(){
   const {data,error}=await sb.rpc('pitch_public_booking_config',{p_venue:null});if(error)throw error;
   venues=data.venues||[];sponsors=data.sponsors||[];venue=venues[0]?.id||'rey';renderVenues();renderDays();renderSponsors();
   const c=await sb.rpc('pitch_public_booking_config',{p_venue:venue});
-  if(!c.error){sponsors=c.data.sponsors||[];renderSponsors();showVenueLocation(c.data.selected_venue)}
-  await loadSlots();ev('page_view');
+  if(!c.error){sponsors=c.data.sponsors||[];selectedVenueInfo=c.data.selected_venue||null;renderSponsors();showVenueLocation(selectedVenueInfo);renderVenueInfo()}
+  restoreCustomer();renderVenueInfo();await loadSlots();ev('page_view');
 }
 function renderVenues(){
   $('venues').innerHTML=venues.map(v=>`<button class="chip ${v.id===venue?'on':''}" data-v="${v.id}">⚽ ${v.name}</button>`).join('');
   document.querySelectorAll('[data-v]').forEach(b=>b.onclick=async()=>{
     venue=b.dataset.v;selected=null;$('form').style.display='none';renderVenues();ev('venue_view');
     const r=await sb.rpc('pitch_public_booking_config',{p_venue:venue});
-    if(!r.error){sponsors=r.data.sponsors||[];showVenueLocation(r.data.selected_venue)}
+    if(!r.error){sponsors=r.data.sponsors||[];selectedVenueInfo=r.data.selected_venue||null;showVenueLocation(selectedVenueInfo);renderVenueInfo()}
     renderSponsors();await loadSlots();
   });
 }
@@ -371,7 +408,7 @@ $('submit').onclick=async()=>{
   const name=$('name').value.trim(),phone=normPhone($('phone').value),span=Number($('duration').value||1);
   if(!name)return alert('اكتب اسمك');
   if(!/^01\d{9}$/.test(phone))return alert('راجع رقم الموبايل');
-  const b=$('submit');b.disabled=true;b.textContent='جارٍ الإرسال…';
+  rememberCustomer(name,phone);const b=$('submit');b.disabled=true;b.textContent='جارٍ الإرسال…';
   const chosen=slots.find(x=>x.op_hour===selected);
   if(!chosen){b.disabled=false;b.textContent='إرسال طلب الحجز';return alert('اختار ميعاد متاح');}
   const {data,error}=await sb.rpc('pitch_public_submit_booking',{p_venue:venue,p_date:chosen.calendar_date,p_hour:Number(chosen.hour),p_span:span,p_name:name,p_phone:phone,p_details:$('details').value.trim()||null,p_sponsor_code:lastClickedSponsor||null});
@@ -382,8 +419,11 @@ $('submit').onclick=async()=>{
     else{ev('booking_error',selected,null,{message:String(error.message||'error').slice(0,100)});alert('حصل خطأ، حاول تاني');}
     return;
   }
-  ev('booking_submitted',selected);
-  const actualDate=new Date(chosen.calendar_date+'T12:00:00');$('main').innerHTML=`<section class="card success"><div class="ok">✅</div><h2>طلبك وصل يا ${name}!</h2><p>طلب <b>${DAYS[actualDate.getDay()]} ${actualDate.getDate()} ${MONTHS[actualDate.getMonth()]}</b> الساعة <b>${fh(Number(chosen.hour))}</b> لمدة <b>${span} ساعة</b> اتسجل بسعر <b>${Number(data.price).toLocaleString()} جنيه</b>.</p><p class="muted">الإدارة هتراجع الطلب وتتواصل معاك لتأكيد الحجز.</p></section>`;
+  ev('booking_submitted',selected,lastClickedSponsor||null,{attributed:!!lastClickedSponsor});
+  const actualDate=new Date(chosen.calendar_date+'T12:00:00'),vn=venues.find(v=>v.id===venue)?.name||venue;
+  const shareText=`حجزت ${vn} ${DAYS[actualDate.getDay()]} ${actualDate.getDate()} ${MONTHS[actualDate.getMonth()]} الساعة ${fh(Number(chosen.hour))} لمدة ${span} ساعة — هتيجي؟`;
+  $('main').innerHTML=`<section class="card success"><div class="ok">⏳</div><h2>تم إرسال طلب الحجز</h2><div class="confidence"><b>في انتظار تأكيد الملعب</b><span>طلبك وصل يا ${esc(name)}، لكنه لسه مش حجز مؤكد. الإدارة هتراجع الموعد وتتواصل معاك عند التأكيد.</span></div><p><b>${esc(vn)}</b><br><b>${DAYS[actualDate.getDay()]} ${actualDate.getDate()} ${MONTHS[actualDate.getMonth()]}</b> · <b>${fh(Number(chosen.hour))}</b> · <b>${span} ساعة</b><br><b style="color:var(--booked)">${Number(data.price).toLocaleString()} جنيه</b></p><div class="success-actions"><button class="btn" id="rebookBtn">⚽ احجز موعد تاني</button><button class="btn share" id="shareBtn">↗ شارك مع صحابك</button></div><p class="muted" style="margin-top:12px">احتفظ بالصفحة لحد ما يوصلك تأكيد الإدارة.</p>${postBookingSponsor()}</section>`;
+  $('rebookBtn').onclick=resetForRebook;$('shareBtn').onclick=()=>shareBooking(shareText);
 };
 boot().catch(e=>{console.error(e);$('slotStatus').textContent='حصل خطأ في التحميل. حدّث الصفحة.'});
 </script>
