@@ -199,6 +199,15 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
 .wa-float,.loc-float{bottom:calc(16px + env(safe-area-inset-bottom))}
 @media(max-width:430px){.card{padding:16px}.journey{font-size:.69rem}#adHero .partner-hero .content{grid-template-columns:1fr;gap:9px}#adHero .partner-hero .partner-cta{justify-self:start}.partner-strip img{width:48px;height:48px}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important}}
+/* Persistent selection summary, clear of floating contact actions. */
+.booking-dock[hidden]{display:none}
+.booking-dock{position:fixed;bottom:0;left:0;right:0;z-index:60;background:#0d1912f5;border-top:1px solid var(--turf-line);padding:12px 16px calc(12px + env(safe-area-inset-bottom));box-shadow:0 -8px 24px #0004}
+.dock-inner{max-width:608px;margin:auto;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;align-items:center}
+.dock-copy{min-width:0}.dock-copy b{display:block;font-size:.85rem;overflow-wrap:anywhere}.dock-copy span{display:block;font-size:.76rem;color:var(--chalk-dim);line-height:1.6}
+.dock-action{display:flex;flex-direction:column;align-items:center;gap:5px}.dock-action strong{color:var(--booked);font-size:.95rem}.dock-action button{border:0;border-radius:10px;background:var(--turf);color:#fff;padding:11px 13px;font:700 .8rem var(--font);cursor:pointer}
+body.has-selection .wrap{padding-bottom:240px}body.has-selection .wa-float,body.has-selection .loc-float{bottom:calc(150px + env(safe-area-inset-bottom))}
+.slot .slot-range{font-size:.85rem;line-height:1.65;white-space:nowrap}.slot .slot-range bdi{unicode-bidi:isolate}
+@media(max-width:350px){.dock-inner{gap:7px}.dock-action button{padding:10px 8px;font-size:.74rem}}
 </style></head><body>
 
 <header class="hero"><div class="hero-inner"><span class="hero-kicker">الكورة تجمعنا</span><div class="brand">⚽ ملاعب كابتن بيبو</div><p>لمّ فريقك… واختار ميعادكم</p><a class="hero-book" href="#bookingStart">شوف المواعيد المتاحة ←</a><div class="hero-note">اختار الميعاد · ابعت طلبك · استنى تأكيد الملعب</div></div></header>
@@ -238,6 +247,9 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
   <div id="adFooter" class="partner-zone"></div>
 
 </main>
+<aside id="bookingDock" class="booking-dock" aria-label="ملخص الميعاد المختار" hidden>
+ <div class="dock-inner"><div class="dock-copy" role="status" aria-live="polite"><b id="dockVenue"></b><span id="dockDay"></span><span id="dockTime"></span></div><div class="dock-action"><strong id="dockPrice"></strong><button type="button" id="dockContinue">كمّل طلب الحجز ←</button></div></div>
+</aside>
 
 <a id="locFloat" class="loc-float" target="_blank" rel="noopener noreferrer" aria-label="موقع الملعب" title="موقع الملعب">📍</a>
 <a class="wa-float" href="https://wa.me/201557547497" target="_blank" rel="noopener noreferrer" aria-label="واتساب ملاعب كابتن بيبو">
@@ -255,6 +267,13 @@ try{lastClickedSponsor=sessionStorage.cb_last_sponsor||null}catch{}
 const ymd=d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
 const dk=d=>`${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
 const fh=h=>`${h%12||12}:00 ${h>=12&&h<24?'م':'ص'}`;
+function hourRange(start,span=1){
+ const a=((start%24)+24)%24,b=(a+span)%24;
+ const period=h=>h<12?'صباحًا':'مساءً';
+ return period(a)===period(b)?`${a%12||12}–${b%12||12} ${period(b)}`:`${a%12||12} ${period(a)} – ${b%12||12} ${period(b)}`;
+}
+function hideBookingDock(){ $('bookingDock').hidden=true;document.body.classList.remove('has-selection') }
+$('dockContinue').onclick=()=>{if(selected===null)return;$('form').scrollIntoView({behavior:'smooth',block:'start'});$('name').focus({preventScroll:true})};
 const ev=(t,h=null,sp=null,meta={})=>sb.rpc('pitch_public_event',{p_event_type:t,p_venue:venue,p_date_key:dk(date),p_hour:h,p_sponsor_code:sp,p_visit_id:VISIT,p_referrer:ATTR.referrer,p_utm_source:ATTR.source,p_utm_medium:ATTR.medium,p_utm_campaign:ATTR.campaign,p_meta:meta}).then(()=>{}).catch(()=>{});
 function normPhone(v){let p=String(v||'').replace(/\D/g,'');if(p.startsWith('0020'))p=p.slice(4);else if(p.startsWith('20')&&p.length>=12)p=p.slice(2);if(p.length===10&&p.startsWith('1'))p='0'+p;return p}
 
@@ -365,6 +384,7 @@ function renderDays(){
   document.querySelectorAll('[data-date]').forEach(b=>b.onclick=()=>{date=new Date(b.dataset.date+'T12:00:00');selected=null;$('form').style.display='none';renderDays();ev('date_view');loadSlots();});
 }
 async function loadSlots(){
+  hideBookingDock();
   $('slotStatus').style.display='block';$('slotStatus').textContent='جارٍ تحميل مواعيد اليوم التشغيلي…';$('slots').innerHTML='';
   const next=new Date(date);next.setDate(next.getDate()+1);
   const [a,b]=await Promise.all([
@@ -385,7 +405,7 @@ function renderSlots(){
     const icon=period==='نهار'?'☀️':period==='مساء'?'🌙':'🌘';
     const head=period!==lastPeriod?`<div class="slot-period">${icon} ${period}</div>`:'';
     lastPeriod=period;
-    return head+`<button class="slot ${!s.available?'off':selected===s.op_hour?'on':''}" data-h="${s.op_hour}" aria-disabled="${!s.available?'true':'false'}"><span>${fh(Number(s.hour))}</span><small>${s.available?Number(s.price).toLocaleString()+' ج':'محجوز'}</small></button>`;
+    return head+`<button class="slot ${!s.available?'off':selected===s.op_hour?'on':''}" data-h="${s.op_hour}" aria-disabled="${!s.available?'true':'false'}"><span class="slot-range"><bdi>${hourRange(Number(s.hour))}</bdi></span><small>${s.available?Number(s.price).toLocaleString()+' ج':'محجوز'}</small></button>`;
   }).join('');
   document.querySelectorAll('.slot').forEach(b=>b.onclick=()=>{
     const h=Number(b.dataset.h),x=slots.find(z=>z.op_hour===h);
@@ -452,11 +472,18 @@ function choose(h){
   $('form').scrollIntoView({behavior:'smooth',block:'start'});
 }
 function updateSummary(){
-  if(selected===null)return;
+  if(selected===null){hideBookingDock();return;}
   const span=Number($('duration').value||1);let total=0;
   for(let h=selected;h<selected+span;h++)total+=Number(slots.find(s=>s.op_hour===h)?.price||0);
   const vn=venues.find(v=>v.id===venue)?.name||venue;
-  $('summary').innerHTML=`<b>${vn}</b><br>${DAYS[date.getDay()]} ${date.getDate()} ${MONTHS[date.getMonth()]} · ${fh(selected%24)} → ${fh((selected+span)%24)}<br><b style="color:var(--booked)">${total.toLocaleString()} جنيه</b>`;
+  $('summary').innerHTML=`<b>${esc(vn)}</b><br>${DAYS[date.getDay()]} ${date.getDate()} ${MONTHS[date.getMonth()]} · ${fh(selected%24)} → ${fh((selected+span)%24)}<br><b style="color:var(--booked)">${total.toLocaleString()} جنيه</b>`;
+  const chosen=slots.find(s=>s.op_hour===selected);
+  const actual=chosen?new Date(chosen.calendar_date+'T12:00:00'):date;
+  $('dockVenue').textContent=vn;
+  $('dockDay').textContent=`${DAYS[actual.getDay()]} ${actual.getDate()} ${MONTHS[actual.getMonth()]}`;
+  $('dockTime').textContent=hourRange(selected,span)+(selected%24+span>=24?' · النهاية اليوم التالي':'');
+  $('dockPrice').textContent=total.toLocaleString()+' جنيه';
+  $('bookingDock').hidden=false;document.body.classList.add('has-selection');
 }
 $('duration').onchange=updateSummary;
 $('phone').oninput=e=>e.target.value=e.target.value.replace(/\D/g,'').slice(0,15);
@@ -475,6 +502,7 @@ $('submit').onclick=async()=>{
     else{ev('booking_error',selected,null,{message:String(error.message||'error').slice(0,100)});alert('حصل خطأ، حاول تاني');}
     return;
   }
+  hideBookingDock();
   ev('booking_submitted',selected,lastClickedSponsor||null,{attributed:!!lastClickedSponsor});
   const actualDate=new Date(chosen.calendar_date+'T12:00:00'),vn=venues.find(v=>v.id===venue)?.name||venue;
   const shareText=`حجزت ${vn} ${DAYS[actualDate.getDay()]} ${actualDate.getDate()} ${MONTHS[actualDate.getMonth()]} الساعة ${fh(Number(chosen.hour))} لمدة ${span} ساعة — هتيجي؟`;
