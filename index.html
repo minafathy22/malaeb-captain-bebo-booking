@@ -122,8 +122,8 @@ details summary{cursor:pointer;color:var(--chalk-dim);margin-top:10px;font-size:
 
 /* ===== Floating actions (location + whatsapp) ===== */
 .wa-float{position:fixed;left:18px;bottom:18px;z-index:50;width:56px;height:56px;border-radius:50%;
-  background:#25D366;display:grid;place-items:center;box-shadow:0 5px 18px rgba(0,0,0,.4);text-decoration:none}
-.wa-float svg{width:30px;height:30px;fill:#fff}
+  background:linear-gradient(145deg,#29df72,#16a653);color:#fff;display:grid;place-items:center;border:1px solid #ffffff50;box-shadow:0 5px 18px rgba(0,0,0,.4),inset 0 1px 0 #ffffff35;text-decoration:none}
+.wa-float svg{width:32px;height:32px;display:block;fill:currentColor}
 .loc-float{position:fixed;right:18px;bottom:18px;z-index:50;width:56px;height:56px;border-radius:50%;display:none;
   align-items:center;justify-content:center;background:var(--panel);color:var(--booked);border:2px solid var(--turf-line);
   box-shadow:0 5px 18px rgba(0,0,0,.4);text-decoration:none;font-size:24px}
@@ -163,18 +163,63 @@ details summary{cursor:pointer;color:var(--chalk-dim);margin-top:10px;font-size:
 .post-partner{margin-top:18px;text-align:right}.post-partner .partner-hero{min-height:170px}.post-partner .partner-hero .media{height:170px}
 @media(max-width:430px){.partner-hero{min-height:205px}.partner-hero .media{height:205px}.partner-hero .content{grid-template-columns:1fr}.partner-cta{text-align:center}.partner-strip{align-items:flex-start}.partner-strip .partner-cta{display:none}}
 
+/* Booking refresh: retain brand tokens and the original slot grid. */
+html{scroll-behavior:smooth;scroll-padding-top:16px}
+body{background:radial-gradient(ellipse at top,#17321f 0,var(--night) 560px)}
+.hero{padding:30px 20px 28px;border-bottom:1px solid var(--turf-line)}
+.hero-inner{max-width:600px;margin:auto;position:relative;z-index:1}
+.hero-kicker{display:inline-block;font-size:.72rem;letter-spacing:.3px;border:1px solid #ffffff40;border-radius:999px;padding:4px 13px;background:#075c2c80}
+.brand{margin-top:9px;font-size:clamp(1.4rem,5vw,1.9rem)}
+.hero p{font:700 1.06rem var(--display);margin-top:8px}
+.hero-book{display:inline-flex;margin-top:18px;padding:11px 24px;background:var(--chalk);color:var(--turf-dark);border-radius:12px;text-decoration:none;font-weight:900;box-shadow:0 6px 20px #0002}
+.hero-note{margin-top:12px;font-size:.74rem;color:#e0eee4}
+.wrap{max-width:640px;padding-top:18px}
+.journey{display:flex;justify-content:space-between;gap:6px;margin:0 0 18px;color:var(--chalk-dim);font-size:.76rem}
+.journey span{display:flex;align-items:center;gap:6px}.journey b,.step-num{display:inline-grid;place-items:center;width:25px;height:25px;border-radius:8px;background:var(--turf-dark);color:var(--chalk);font:700 .8rem var(--display)}
+.card{padding:20px;border-color:#2fa86230;box-shadow:0 6px 24px #0002;margin:18px 0;border-radius:20px}
+h2{font-size:1.1rem;gap:10px}.section-note{font-size:.82rem;margin-top:7px}
+.chip{min-height:46px;border-color:#2fa86238}.chip.on{box-shadow:inset 0 0 0 1px var(--turf-line)}
+.days{padding-bottom:8px;scrollbar-width:thin;scrollbar-color:var(--turf-line) var(--panel)}
+.venues{flex-wrap:wrap;overflow:visible}.venues .chip{flex:1}
+.venue-info{background:transparent;border:0;border-top:1px solid var(--lane);border-radius:0;padding:12px 0 0}
+.slot-period{padding-top:14px;padding-bottom:3px}.slot{transition:background .15s,box-shadow .15s}.slot.on{box-shadow:0 0 0 2px var(--chalk)}
+.summary{background:#e8b23a0a;border-style:solid;line-height:1.9}.confidence{border-color:#e8b23a55}
+.partner-zone{margin:16px 0}.partner-label{font-size:.74rem;padding:0 4px}
+#adHero .partner-hero{min-height:130px}#adHero .partner-hero .media{height:130px}
+#adHero .partner-hero .content{grid-template-columns:1fr auto;align-items:center;bottom:12px}
+#adHero .partner-hero h3{font-size:.94rem}#adHero .partner-hero p{font-size:.74rem}
+.partner-hero .content{position:relative;right:auto;left:auto;bottom:auto;padding:14px;z-index:1}
+.partner-hero .media{position:absolute;inset:0;height:100%!important;width:100%;opacity:.45}
+.partner-hero .shade{background:linear-gradient(90deg,#0d1912cc,#0d1912f0)}
+.partner-hero{display:flex;align-items:flex-end;min-height:160px}.partner-hero .content{width:100%;padding-top:42px}
+#adHero .partner-hero .content{bottom:auto}.partner-strip .partner-cta{display:block}
+.partner-strip{flex-wrap:wrap}.partner-strip .copy{min-width:140px}.partner-strip .partner-cta{font-size:.72rem;padding:9px 10px}
+.partner-badge{font-size:.65rem}.partner-cta{border:1px solid #e8b23a80}
+button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,summary:focus-visible{outline:3px solid var(--booked);outline-offset:3px}
+.wa-float,.loc-float{bottom:calc(16px + env(safe-area-inset-bottom))}
+@media(max-width:430px){.card{padding:16px}.journey{font-size:.69rem}#adHero .partner-hero .content{grid-template-columns:1fr;gap:9px}#adHero .partner-hero .partner-cta{justify-self:start}.partner-strip img{width:48px;height:48px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important}}
+/* Persistent selection summary, clear of floating contact actions. */
+.booking-dock[hidden]{display:none}
+.booking-dock{position:fixed;bottom:0;left:0;right:0;z-index:60;background:#0d1912f5;border-top:1px solid var(--turf-line);padding:12px 16px calc(12px + env(safe-area-inset-bottom));box-shadow:0 -8px 24px #0004}
+.dock-inner{max-width:608px;margin:auto;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;align-items:center}
+.dock-copy{min-width:0}.dock-copy b{display:block;font-size:.85rem;overflow-wrap:anywhere}.dock-copy span{display:block;font-size:.76rem;color:var(--chalk-dim);line-height:1.6}
+.dock-action{display:flex;flex-direction:column;align-items:center;gap:5px}.dock-action strong{color:var(--booked);font-size:.95rem}.dock-action button{border:0;border-radius:10px;background:var(--turf);color:#fff;padding:11px 13px;font:700 .8rem var(--font);cursor:pointer}
+body.has-selection .wrap{padding-bottom:240px}body.has-selection .wa-float,body.has-selection .loc-float{bottom:calc(150px + env(safe-area-inset-bottom))}
+.slot .slot-range{font-size:.85rem;line-height:1.65;white-space:nowrap}.slot .slot-range bdi{unicode-bidi:isolate}
+@media(max-width:350px){.dock-inner{gap:7px}.dock-action button{padding:10px 8px;font-size:.74rem}}
 </style></head><body>
 
-<header class="hero"><div class="brand">⚽ ملاعب كابتن بيبو</div><p>اختار ملعبك وميعادك في أقل من دقيقة</p></header>
+<header class="hero"><div class="hero-inner"><span class="hero-kicker">الكورة تجمعنا</span><div class="brand">⚽ ملاعب كابتن بيبو</div><p>لمّ فريقك… واختار ميعادكم</p><a class="hero-book" href="#bookingStart">شوف المواعيد المتاحة ←</a><div class="hero-note">اختار الميعاد · ابعت طلبك · استنى تأكيد الملعب</div></div></header>
 
-<main class="wrap" id="main">
+<main class="wrap" id="main"><nav class="journey" aria-label="خطوات الحجز"><span><b>١</b> الملعب</span><span><b>٢</b> اليوم والساعة</span><span><b>٣</b> طلب الحجز</span></nav>
 
   <!-- Ad slot 1: hero rail — small cards, clearly tagged, above the fold but not blocking the flow -->
   <div id="adHero" class="partner-zone"></div>
 
-  <section class="card"><h2>🏟️ الملعب</h2><div class="venues" id="venues"></div><div class="venue-info" id="venueInfo"></div><div id="venueLocation" style="display:none"></div></section>
+  <section class="card" id="bookingStart"><h2><span class="step-num">١</span> هتلعب فين؟</h2><p class="section-note">اختار الملعب المناسب لفريقك.</p><div class="venues" id="venues"></div><div class="venue-info" id="venueInfo"></div><div id="venueLocation" style="display:none"></div></section>
 
-  <section class="card"><h2>📅 اختار اليوم التشغيلي</h2>
+  <section class="card"><h2><span class="step-num">٢</span> اختار اليوم والساعة</h2>
     <p class="section-note">اليوم التشغيلي يبدأ 6 صباحًا وينتهي 5:59 صباح اليوم التالي — مواعيد بعد منتصف الليل بتظهر مع نفس يوم التشغيل.</p>
     <div class="days" id="days"></div>
     <div id="slotStatus" class="status">جارٍ تحميل المواعيد…</div>
@@ -186,13 +231,13 @@ details summary{cursor:pointer;color:var(--chalk-dim);margin-top:10px;font-size:
   <div id="adMid" class="partner-zone"></div>
 
   <section class="card" id="form" style="display:none">
-    <h2>✓ ثبّت طلبك</h2>
+    <h2><span class="step-num">٣</span> ابعت طلب الحجز</h2>
     <p class="form-title-sub">خطوة أخيرة — الاسم والموبايل بس.</p>
     <div class="booking-trust"><span class="trust-pill">🔒 بدون دفع دلوقتي</span><span class="trust-pill">⚡ الطلب في أقل من دقيقة</span></div>
     <div class="summary" id="summary"></div>
-    <label>مدة الحجز</label><select id="duration"></select>
-    <div class="confidence"><b>⏳ ده طلب حجز — مش تأكيد نهائي لسه</b><span>بعد الإرسال هنستلم طلبك، والإدارة هتراجعه. الحجز يبقى مؤكد فقط بعد موافقة الملعب.</span></div><label>الاسم</label><input id="name" autocomplete="name" placeholder="اسمك">
-    <label>رقم الموبايل</label><input id="phone" inputmode="numeric" autocomplete="tel" placeholder="01xxxxxxxxx"><div class="remember-note">هنحفظ الاسم والرقم على جهازك لتسريع الحجز الجاي.</div>
+    <label for="duration">مدة الحجز</label><select id="duration"></select>
+    <div class="confidence"><b>⏳ ده طلب حجز — مش تأكيد نهائي لسه</b><span>بعد الإرسال هنستلم طلبك، والإدارة هتراجعه. الحجز يبقى مؤكد فقط بعد موافقة الملعب.</span></div><label for="name">الاسم</label><input id="name" autocomplete="name" placeholder="اسمك">
+    <label for="phone">رقم الموبايل</label><input id="phone" inputmode="numeric" autocomplete="tel" placeholder="01xxxxxxxxx"><div class="remember-note">هنحفظ الاسم والرقم على جهازك لتسريع الحجز الجاي.</div>
     <details><summary>+ عندك ملاحظة؟</summary><textarea id="details" placeholder="اكتبها هنا"></textarea></details>
     <button class="btn" id="submit">إرسال طلب الحجز</button>
     <p class="muted" style="margin-top:8px">الطلب بيتراجع من الإدارة، والحجز يتأكد بعد التواصل معاك.</p>
@@ -202,10 +247,13 @@ details summary{cursor:pointer;color:var(--chalk-dim);margin-top:10px;font-size:
   <div id="adFooter" class="partner-zone"></div>
 
 </main>
+<aside id="bookingDock" class="booking-dock" aria-label="ملخص الميعاد المختار" hidden>
+ <div class="dock-inner"><div class="dock-copy" role="status" aria-live="polite"><b id="dockVenue"></b><span id="dockDay"></span><span id="dockTime"></span></div><div class="dock-action"><strong id="dockPrice"></strong><button type="button" id="dockContinue">كمّل طلب الحجز ←</button></div></div>
+</aside>
 
 <a id="locFloat" class="loc-float" target="_blank" rel="noopener noreferrer" aria-label="موقع الملعب" title="موقع الملعب">📍</a>
 <a class="wa-float" href="https://wa.me/201557547497" target="_blank" rel="noopener noreferrer" aria-label="واتساب ملاعب كابتن بيبو">
-  <svg viewBox="0 0 32 32"><path d="M19.11 17.45c-.29-.15-1.72-.85-1.99-.95-.27-.1-.47-.15-.67.15-.2.29-.76.95-.93 1.15-.17.2-.34.22-.64.07-.29-.15-1.24-.46-2.36-1.46-.87-.78-1.46-1.74-1.63-2.03-.17-.29-.02-.45.13-.6.13-.13.29-.34.44-.51.15-.17.2-.29.29-.49.1-.2.05-.37-.02-.51-.07-.15-.67-1.61-.91-2.2-.24-.58-.49-.5-.67-.51h-.57c-.2 0-.51.07-.78.37-.27.29-1.03 1-1.03 2.44s1.05 2.83 1.2 3.03c.15.2 2.06 3.15 5 4.42.7.3 1.24.48 1.67.61.7.22 1.33.19 1.83.12.56-.08 1.72-.7 1.96-1.39.24-.68.24-1.27.17-1.39-.07-.12-.27-.2-.56-.34M16.04 27h-.01a10.93 10.93 0 0 1-5.57-1.53l-.4-.24-4.14 1.09 1.1-4.04-.26-.41A10.93 10.93 0 1 1 16.04 27m9.3-20.34A13.06 13.06 0 0 0 16.03 2C8.82 2 2.96 7.86 2.96 15.07c0 2.3.6 4.55 1.74 6.53L2.85 28.4l6.96-1.83a13.04 13.04 0 0 0 6.22 1.58h.01c7.2 0 13.07-5.86 13.07-13.07 0-3.49-1.36-6.77-3.77-9.42"/></svg>
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="32" height="32" aria-hidden="true" focusable="false"><path fill="currentColor" d="M20.52 3.48A11.91 11.91 0 0 0 12.04 0C5.46 0 .1 5.35.1 11.93c0 2.1.55 4.16 1.6 5.98L0 24l6.24-1.64a11.95 11.95 0 0 0 5.8 1.48h.01c6.58 0 11.94-5.35 11.94-11.93 0-3.19-1.24-6.18-3.47-8.43ZM12.05 21.8h-.01a9.9 9.9 0 0 1-5.04-1.38l-.36-.22-3.7.97.99-3.61-.24-.37a9.87 9.87 0 0 1-1.51-5.26c0-5.47 4.45-9.91 9.92-9.91 2.65 0 5.14 1.03 7.01 2.9a9.85 9.85 0 0 1 2.9 7.02c0 5.47-4.45 9.92-9.96 9.86Zm5.44-7.42c-.3-.15-1.77-.87-2.04-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.94 1.17-.17.2-.35.22-.64.07-.3-.15-1.26-.46-2.39-1.47-.88-.78-1.47-1.75-1.64-2.05-.17-.3-.02-.46.13-.61.13-.13.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.07-.15-.67-1.62-.92-2.22-.24-.58-.49-.5-.67-.51h-.57c-.2 0-.52.07-.8.37-.27.3-1.04 1.02-1.04 2.49 0 1.47 1.07 2.89 1.22 3.09.15.2 2.1 3.2 5.09 4.49.71.31 1.27.49 1.7.63.72.23 1.38.2 1.9.12.58-.09 1.77-.72 2.02-1.42.25-.7.25-1.3.17-1.42-.07-.12-.27-.2-.57-.35Z"/></svg>
 </a>
 
 <script>
@@ -219,6 +267,13 @@ try{lastClickedSponsor=sessionStorage.cb_last_sponsor||null}catch{}
 const ymd=d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
 const dk=d=>`${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
 const fh=h=>`${h%12||12}:00 ${h>=12&&h<24?'م':'ص'}`;
+function hourRange(start,span=1){
+ const a=((start%24)+24)%24,b=(a+span)%24;
+ const period=h=>h<12?'صباحًا':'مساءً';
+ return period(a)===period(b)?`${a%12||12}–${b%12||12} ${period(b)}`:`${a%12||12} ${period(a)} – ${b%12||12} ${period(b)}`;
+}
+function hideBookingDock(){ $('bookingDock').hidden=true;document.body.classList.remove('has-selection') }
+$('dockContinue').onclick=()=>{if(selected===null)return;$('form').scrollIntoView({behavior:'smooth',block:'start'});$('name').focus({preventScroll:true})};
 const ev=(t,h=null,sp=null,meta={})=>sb.rpc('pitch_public_event',{p_event_type:t,p_venue:venue,p_date_key:dk(date),p_hour:h,p_sponsor_code:sp,p_visit_id:VISIT,p_referrer:ATTR.referrer,p_utm_source:ATTR.source,p_utm_medium:ATTR.medium,p_utm_campaign:ATTR.campaign,p_meta:meta}).then(()=>{}).catch(()=>{});
 function normPhone(v){let p=String(v||'').replace(/\D/g,'');if(p.startsWith('0020'))p=p.slice(4);else if(p.startsWith('20')&&p.length>=12)p=p.slice(2);if(p.length===10&&p.startsWith('1'))p='0'+p;return p}
 
@@ -240,8 +295,27 @@ function compactSponsor(x,place='mid'){
  const media=sponsorLogo(x)||sponsorMedia(x),name=esc(x.name||''),copy=esc(x.copy||''),cta=esc(x.cta||'اعرف أكتر');
  return `<a class="partner-strip" href="${safeUrl(x.url)}" target="_blank" rel="noopener noreferrer" data-sp="${esc(x.id)}" data-place="${place}">${media?`<img src="${media}" alt="${name}" referrerpolicy="no-referrer">`:''}<span class="copy"><b>برعاية ${name}</b><small>${copy}</small></span><span class="partner-cta">${cta} ↗</span></a>`;
 }
+const sponsorSeen=new Set(),sponsorTimers=new Map();
+const sponsorObserver=typeof IntersectionObserver==='function'?new IntersectionObserver(entries=>{
+ entries.forEach(({target:a,isIntersecting,intersectionRatio})=>{
+  const key=a.dataset.sp+':'+a.dataset.place;
+  if(!isIntersecting||intersectionRatio<.5){clearTimeout(sponsorTimers.get(a));sponsorTimers.delete(a);return}
+  if(sponsorSeen.has(key)||sponsorTimers.has(a))return;
+  sponsorTimers.set(a,setTimeout(()=>{
+   sponsorTimers.delete(a);if(!a.isConnected||document.visibilityState!=='visible')return;
+   if(sponsorSeen.has(key))return;sponsorSeen.add(key);
+   ev('sponsor_impression',null,a.dataset.sp,{placement:a.dataset.place,format:a.classList.contains('partner-hero')?'premium':'strip',viewable:true});
+   sponsorObserver.unobserve(a);
+  },1000));
+ });
+},{threshold:[0,.5]}):null;
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState!=='visible'){sponsorTimers.forEach(clearTimeout);sponsorTimers.clear()}else if(sponsorObserver){document.querySelectorAll('[data-sp]').forEach(a=>{sponsorObserver.unobserve(a);sponsorObserver.observe(a)})}});
+function clearSponsorObservers(){sponsorObserver?.disconnect();sponsorTimers.forEach(clearTimeout);sponsorTimers.clear()}
 function bindSponsorClicks(root=document){
- root.querySelectorAll('[data-sp]').forEach(a=>a.onclick=()=>{lastClickedSponsor=a.dataset.sp||null;try{sessionStorage.cb_last_sponsor=lastClickedSponsor||''}catch{}ev('sponsor_click',null,a.dataset.sp,{placement:a.dataset.place});});
+ root.querySelectorAll('[data-sp]').forEach(a=>{
+  sponsorObserver?.observe(a);
+  a.onclick=()=>{lastClickedSponsor=a.dataset.sp||null;try{sessionStorage.cb_last_sponsor=lastClickedSponsor||''}catch{}ev('sponsor_click',null,a.dataset.sp,{placement:a.dataset.place});};
+ });
 }
 function pickSponsor(place,exclude=[]){
  const explicit=sponsors.filter(x=>x.placement===place&&!exclude.includes(x.id));
@@ -249,17 +323,18 @@ function pickSponsor(place,exclude=[]){
  return (explicit[0]||auto[0]||null);
 }
 function renderSponsors(){
+ clearSponsorObservers();
  ['adHero','adMid','adFooter'].forEach(id=>$(id).innerHTML='');if(!sponsors.length)return;
  const hero=pickSponsor('hero');const used=hero?[hero.id]:[];
- if(hero){$('adHero').innerHTML=`<div class="partner-label"><span>🎗️ الشريك الرئيسي</span><span>إعلان</span></div>${premiumSponsor(hero,'hero')}`;ev('sponsor_impression',null,hero.id,{placement:'hero',format:'premium'});}
- const mid=pickSponsor('mid',used);if(mid){used.push(mid.id);$('adMid').innerHTML=`<div class="partner-label"><span>عرض من أحد شركائنا</span><span>إعلان</span></div>${compactSponsor(mid,'mid')}`;ev('sponsor_impression',null,mid.id,{placement:'mid',format:'strip'});}
- const foot=pickSponsor('footer',used);if(foot){$('adFooter').innerHTML=`<div class="partner-label"><span>شريك كابتن بيبو</span><span>إعلان</span></div>${compactSponsor(foot,'footer')}`;ev('sponsor_impression',null,foot.id,{placement:'footer',format:'strip'});}
+ if(hero){$('adHero').innerHTML=`<div class="partner-label"><span>🎗️ الشريك الرئيسي</span><span>إعلان</span></div>${premiumSponsor(hero,'hero')}`;}
+ const mid=pickSponsor('mid',used);if(mid){used.push(mid.id);$('adMid').innerHTML=`<div class="partner-label"><span>عرض من أحد شركائنا</span><span>إعلان</span></div>${compactSponsor(mid,'mid')}`;}
+ const foot=pickSponsor('footer',used);if(foot){$('adFooter').innerHTML=`<div class="partner-label"><span>شريك كابتن بيبو</span><span>إعلان</span></div>${compactSponsor(foot,'footer')}`;}
  bindSponsorClicks();
 }
 function postBookingSponsor(){
  if(!sponsors.length)return '';
  const x=pickSponsor('footer')||pickSponsor('hero')||sponsors[0];if(!x)return '';
- setTimeout(()=>{ev('sponsor_impression',null,x.id,{placement:'post_booking',format:'premium'});bindSponsorClicks(document)},0);
+ setTimeout(()=>{clearSponsorObservers();bindSponsorClicks(document)},0);
  return `<div class="post-partner"><div class="partner-label"><span>🎁 عرض بعد الحجز</span><span>إعلان</span></div>${premiumSponsor(x,'post_booking')}</div>`;
 }
 
@@ -309,6 +384,7 @@ function renderDays(){
   document.querySelectorAll('[data-date]').forEach(b=>b.onclick=()=>{date=new Date(b.dataset.date+'T12:00:00');selected=null;$('form').style.display='none';renderDays();ev('date_view');loadSlots();});
 }
 async function loadSlots(){
+  hideBookingDock();
   $('slotStatus').style.display='block';$('slotStatus').textContent='جارٍ تحميل مواعيد اليوم التشغيلي…';$('slots').innerHTML='';
   const next=new Date(date);next.setDate(next.getDate()+1);
   const [a,b]=await Promise.all([
@@ -329,7 +405,7 @@ function renderSlots(){
     const icon=period==='نهار'?'☀️':period==='مساء'?'🌙':'🌘';
     const head=period!==lastPeriod?`<div class="slot-period">${icon} ${period}</div>`:'';
     lastPeriod=period;
-    return head+`<button class="slot ${!s.available?'off':selected===s.op_hour?'on':''}" data-h="${s.op_hour}" aria-disabled="${!s.available?'true':'false'}"><span>${fh(Number(s.hour))}</span><small>${s.available?Number(s.price).toLocaleString()+' ج':'محجوز'}</small></button>`;
+    return head+`<button class="slot ${!s.available?'off':selected===s.op_hour?'on':''}" data-h="${s.op_hour}" aria-disabled="${!s.available?'true':'false'}"><span class="slot-range"><bdi>${hourRange(Number(s.hour))}</bdi></span><small>${s.available?Number(s.price).toLocaleString()+' ج':'محجوز'}</small></button>`;
   }).join('');
   document.querySelectorAll('.slot').forEach(b=>b.onclick=()=>{
     const h=Number(b.dataset.h),x=slots.find(z=>z.op_hour===h);
@@ -396,11 +472,18 @@ function choose(h){
   $('form').scrollIntoView({behavior:'smooth',block:'start'});
 }
 function updateSummary(){
-  if(selected===null)return;
+  if(selected===null){hideBookingDock();return;}
   const span=Number($('duration').value||1);let total=0;
   for(let h=selected;h<selected+span;h++)total+=Number(slots.find(s=>s.op_hour===h)?.price||0);
   const vn=venues.find(v=>v.id===venue)?.name||venue;
-  $('summary').innerHTML=`<b>${vn}</b><br>${DAYS[date.getDay()]} ${date.getDate()} ${MONTHS[date.getMonth()]} · ${fh(selected%24)} → ${fh((selected+span)%24)}<br><b style="color:var(--booked)">${total.toLocaleString()} جنيه</b>`;
+  $('summary').innerHTML=`<b>${esc(vn)}</b><br>${DAYS[date.getDay()]} ${date.getDate()} ${MONTHS[date.getMonth()]} · ${fh(selected%24)} → ${fh((selected+span)%24)}<br><b style="color:var(--booked)">${total.toLocaleString()} جنيه</b>`;
+  const chosen=slots.find(s=>s.op_hour===selected);
+  const actual=chosen?new Date(chosen.calendar_date+'T12:00:00'):date;
+  $('dockVenue').textContent=vn;
+  $('dockDay').textContent=`${DAYS[actual.getDay()]} ${actual.getDate()} ${MONTHS[actual.getMonth()]}`;
+  $('dockTime').textContent=hourRange(selected,span)+(selected%24+span>=24?' · النهاية اليوم التالي':'');
+  $('dockPrice').textContent=total.toLocaleString()+' جنيه';
+  $('bookingDock').hidden=false;document.body.classList.add('has-selection');
 }
 $('duration').onchange=updateSummary;
 $('phone').oninput=e=>e.target.value=e.target.value.replace(/\D/g,'').slice(0,15);
@@ -419,6 +502,7 @@ $('submit').onclick=async()=>{
     else{ev('booking_error',selected,null,{message:String(error.message||'error').slice(0,100)});alert('حصل خطأ، حاول تاني');}
     return;
   }
+  hideBookingDock();
   ev('booking_submitted',selected,lastClickedSponsor||null,{attributed:!!lastClickedSponsor});
   const actualDate=new Date(chosen.calendar_date+'T12:00:00'),vn=venues.find(v=>v.id===venue)?.name||venue;
   const shareText=`حجزت ${vn} ${DAYS[actualDate.getDay()]} ${actualDate.getDate()} ${MONTHS[actualDate.getMonth()]} الساعة ${fh(Number(chosen.hour))} لمدة ${span} ساعة — هتيجي؟`;
