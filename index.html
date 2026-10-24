@@ -350,8 +350,8 @@ function renderVenueInfo(){
 function resetForRebook(){
  selected=null;$('main').querySelector('.success')?.remove();location.reload();
 }
-async function shareBooking(text){
- try{if(navigator.share){await navigator.share({title:'ملاعب كابتن بيبو',text,url:location.href});return}await navigator.clipboard.writeText(text+' '+location.href);alert('اتنسخت تفاصيل الحجز — ابعتها لصحابك على واتساب.')}catch{}
+async function shareBooking(text,bookingUrl=location.href){
+ try{if(navigator.share){await navigator.share({title:'ملاعب كابتن بيبو',text,url:bookingUrl});return}await navigator.clipboard.writeText(text+' '+bookingUrl);alert('اتنسخت تفاصيل الحجز — ابعتها لصحابك على واتساب.')}catch{}
 }
 
 function showVenueLocation(sv){
@@ -494,7 +494,7 @@ $('submit').onclick=async()=>{
   rememberCustomer(name,phone);const b=$('submit');b.disabled=true;b.textContent='جارٍ الإرسال…';
   const chosen=slots.find(x=>x.op_hour===selected);
   if(!chosen){b.disabled=false;b.textContent='إرسال طلب الحجز';return alert('اختار ميعاد متاح');}
-  const {data,error}=await sb.rpc('pitch_public_submit_booking',{p_venue:venue,p_date:chosen.calendar_date,p_hour:Number(chosen.hour),p_span:span,p_name:name,p_phone:phone,p_details:$('details').value.trim()||null,p_sponsor_code:lastClickedSponsor||null});
+  ev('booking_submit_attempt',selected,null,{span});const {data,error}=await sb.rpc('pitch_public_submit_booking',{p_venue:venue,p_date:chosen.calendar_date,p_hour:Number(chosen.hour),p_span:span,p_name:name,p_phone:phone,p_details:$('details').value.trim()||null,p_sponsor_code:lastClickedSponsor||null});
   if(error){
     b.disabled=false;b.textContent='إرسال طلب الحجز';
     if(String(error.message).includes('SLOT_TAKEN')){ev('slot_lost',selected);alert('الميعاد اتحجز حالًا. هنحدّث لك المواعيد المتاحة.');selected=null;$('form').style.display='none';await loadSlots();}
@@ -505,7 +505,7 @@ $('submit').onclick=async()=>{
   hideBookingDock();
   ev('booking_submitted',selected,lastClickedSponsor||null,{attributed:!!lastClickedSponsor});
   const actualDate=new Date(chosen.calendar_date+'T12:00:00'),vn=venues.find(v=>v.id===venue)?.name||venue;
-  const shareText=`حجزت ${vn} ${DAYS[actualDate.getDay()]} ${actualDate.getDate()} ${MONTHS[actualDate.getMonth()]} الساعة ${fh(Number(chosen.hour))} لمدة ${span} ساعة — هتيجي؟`;
+  const shareText=`طلبت حجز ${vn} ${DAYS[actualDate.getDay()]} ${actualDate.getDate()} ${MONTHS[actualDate.getMonth()]} الساعة ${fh(Number(chosen.hour))} لمدة ${span} ساعة — في انتظار تأكيد الملعب.`;
   $('main').innerHTML=`<section class="card success"><div class="ok">⏳</div><h2>تم إرسال طلب الحجز</h2><div class="confidence"><b>في انتظار تأكيد الملعب</b><span>طلبك وصل يا ${esc(name)}، لكنه لسه مش حجز مؤكد. الإدارة هتراجع الموعد وتتواصل معاك عند التأكيد.</span></div><p><b>${esc(vn)}</b><br><b>${DAYS[actualDate.getDay()]} ${actualDate.getDate()} ${MONTHS[actualDate.getMonth()]}</b> · <b>${fh(Number(chosen.hour))}</b> · <b>${span} ساعة</b><br><b style="color:var(--booked)">${Number(data.price).toLocaleString()} جنيه</b></p><div class="success-actions"><button class="btn" id="rebookBtn">⚽ احجز موعد تاني</button><button class="btn share" id="shareBtn">↗ شارك مع صحابك</button></div><p class="muted" style="margin-top:12px">احتفظ بالصفحة لحد ما يوصلك تأكيد الإدارة.</p>${postBookingSponsor()}</section>`;
   $('rebookBtn').onclick=resetForRebook;$('shareBtn').onclick=()=>shareBooking(shareText);
 };
