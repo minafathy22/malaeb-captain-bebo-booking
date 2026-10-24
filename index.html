@@ -264,7 +264,7 @@ const ATTR={referrer:document.referrer||null,source:Q.get('utm_source'),medium:Q
 const DAYS=['الأحد','الإثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'],MONTHS=['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
 let venues=[],venue=null,date=new Date(),slots=[],selected=null,sponsors=[],lastClickedSponsor=null,selectedVenueInfo=null;
 try{lastClickedSponsor=sessionStorage.cb_last_sponsor||null}catch{}
-const PUBLIC_SHARE_BASE=location.origin+location.pathname;
+const PUBLIC_SHARE_BASE='https://publicbooking.vercel.app/';
 function bookingShareUrl(v,day,h){const u=new URL(PUBLIC_SHARE_BASE);if(v)u.searchParams.set('venue',v);if(day)u.searchParams.set('date',day);if(Number.isInteger(h))u.searchParams.set('hour',String(h));return u.toString()}
 function clearRememberedCustomer(){try{localStorage.removeItem('cb_customer')}catch{}$('name').value='';$('phone').value='';}
 
@@ -509,7 +509,7 @@ $('submit').onclick=async()=>{
   hideBookingDock();
   ev('booking_submitted',selected,lastClickedSponsor||null,{attributed:!!lastClickedSponsor});
   const actualDate=new Date(chosen.calendar_date+'T12:00:00'),vn=venues.find(v=>v.id===venue)?.name||venue;
-  const shareText=`طلبت حجز ${vn} ${DAYS[actualDate.getDay()]} ${actualDate.getDate()} ${MONTHS[actualDate.getMonth()]} الساعة ${fh(Number(chosen.hour))} لمدة ${span} ساعة — في انتظار تأكيد الملعب.`;
+  const shareText=`⚽ يلا يا رجالة، الماتش علينا!\n\n📍 ${vn}\n📅 ${DAYS[actualDate.getDay()]} ${actualDate.getDate()} ${MONTHS[actualDate.getMonth()]}\n🕔 ${fh(Number(chosen.hour))} – ${fh((Number(chosen.hour)+span)%24)}\n\n🔥 مين جاهز ينزل؟\n⏳ الميعاد في انتظار تأكيد الملعب\n\n📲 شوف الملعب والميعاد:`;
   $('main').innerHTML=`<section class="card success"><div class="ok">⏳</div><h2>تم إرسال طلب الحجز</h2><div class="confidence"><b>في انتظار تأكيد الملعب</b><span>طلبك وصل يا ${esc(name)}، لكنه لسه مش حجز مؤكد. الإدارة هتراجع الموعد وتتواصل معاك عند التأكيد.</span></div><p><b>${esc(vn)}</b><br><b>${DAYS[actualDate.getDay()]} ${actualDate.getDate()} ${MONTHS[actualDate.getMonth()]}</b> · <b>${fh(Number(chosen.hour))}</b> · <b>${span} ساعة</b><br><b style="color:var(--booked)">${Number(data.price).toLocaleString()} جنيه</b></p><div class="success-actions"><button class="btn" id="rebookBtn">⚽ احجز موعد تاني</button><button class="btn share" id="shareBtn">↗ شارك مع صحابك</button></div><p class="muted" style="margin-top:12px">احتفظ بالصفحة لحد ما يوصلك تأكيد الإدارة.</p>${postBookingSponsor()}</section>`;
   $('rebookBtn').onclick=resetForRebook;$('shareBtn').onclick=()=>shareBooking(shareText,bookingShareUrl(venue,ymd(date),Number(chosen.hour)));
 };
