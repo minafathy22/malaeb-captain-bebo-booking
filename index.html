@@ -500,7 +500,20 @@ $('submit').onclick=async()=>{
   rememberCustomer(name,phone);const b=$('submit');b.disabled=true;b.textContent='جارٍ الإرسال…';
   const chosen=slots.find(x=>x.op_hour===selected);
   if(!chosen){b.disabled=false;b.textContent='إرسال طلب الحجز';return alert('اختار ميعاد متاح');}
-  ev('booking_submit_attempt',selected,null,{span});const {data,error}=await sb.rpc('pitch_public_submit_booking',{p_venue:venue,p_date:chosen.calendar_date,p_hour:Number(chosen.hour),p_span:span,p_name:name,p_phone:phone,p_details:$('details').value.trim()||null,p_sponsor_code:lastClickedSponsor||null});
+  const requestArgs={p_venue:venue,p_date:chosen.calendar_date,p_hour:Number(chosen.hour),p_span:span,p_name:name,p_phone:phone,p_details:$('details').value.trim()||null,p_sponsor_code:lastClickedSponsor||null};
+  ev('booking_submit_attempt',selected,null,{span});
+  let data,error;
+  try{
+    const result=await sb.rpc('pitch_public_submit_booking',requestArgs);
+    data=result.data;error=result.error;
+  }catch(e){error=e}
+  if(error&&!String(error.message||'').match(/SLOT_TAKEN|CUSTOMER_BLOCKED|RATE_LIMITED|INVALID_|OUTSIDE_WORK_HOURS|DATE_OUT_OF_RANGE/)){
+    // Network failure is ambiguous: the server may already have accepted the request.
+    b.disabled=false;b.textContent='إرسال طلب الحجز';
+    alert('مش قادرين نتأكد إن الطلب وصل. بلاش تبعت نفس الطلب تاني دلوقتي؛ تواصل مع الملعب للتأكد من حالته.');
+    ev('booking_result_unknown',selected,null,{span});
+    return;
+  }
   if(error){
     b.disabled=false;b.textContent='إرسال طلب الحجز';
     if(String(error.message).includes('SLOT_TAKEN')){ev('slot_lost',selected);alert('الميعاد اتحجز حالًا. هنحدّث لك المواعيد المتاحة.');selected=null;$('form').style.display='none';await loadSlots();}
