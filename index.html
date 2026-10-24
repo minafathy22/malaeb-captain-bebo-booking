@@ -276,6 +276,7 @@ const DAYS=['الأحد','الإثنين','الثلاثاء','الأربعاء',
 let venues=[],venue=null,date=new Date(),slots=[],selected=null,sponsors=[],lastClickedSponsor=null,selectedVenueInfo=null;
 try{lastClickedSponsor=sessionStorage.cb_last_sponsor||null}catch{}
 const PUBLIC_SHARE_BASE='https://publicbooking.vercel.app/';
+const analyticsSession=()=>({visit_id:VISIT,source:ATTR.source||'direct',medium:ATTR.medium||null,campaign:ATTR.campaign||null});
 function bookingShareUrl(v,day,h){const u=new URL(PUBLIC_SHARE_BASE);if(v)u.searchParams.set('venue',v);if(day)u.searchParams.set('date',day);if(Number.isInteger(h))u.searchParams.set('hour',String(h));return u.toString()}
 function clearRememberedCustomer(){try{localStorage.removeItem('cb_customer')}catch{}$('name').value='';$('phone').value='';}
 
@@ -510,7 +511,7 @@ $('submit').onclick=async()=>{
   const chosen=slots.find(x=>x.op_hour===selected);
   if(!chosen){b.disabled=false;b.textContent='إرسال طلب الحجز';return alert('اختار ميعاد متاح');}
   const requestArgs={p_venue:venue,p_date:chosen.calendar_date,p_hour:Number(chosen.hour),p_span:span,p_name:name,p_phone:phone,p_details:$('details').value.trim()||null,p_sponsor_code:lastClickedSponsor||null};
-  ev('booking_submit_attempt',selected,null,{span});
+  ev('booking_submit_attempt',selected,null,{span,...analyticsSession()});
   let data,error;
   try{
     const result=await sb.rpc('pitch_public_submit_booking',requestArgs);
@@ -520,7 +521,7 @@ $('submit').onclick=async()=>{
     // Network failure is ambiguous: the server may already have accepted the request.
     b.disabled=false;b.textContent='إرسال طلب الحجز';
     alert('مش قادرين نتأكد إن الطلب وصل. بلاش تبعت نفس الطلب تاني دلوقتي؛ تواصل مع الملعب للتأكد من حالته.');
-    ev('booking_result_unknown',selected,null,{span});
+    ev('booking_result_unknown',selected,null,{span,...analyticsSession()});
     return;
   }
   if(error){
@@ -531,7 +532,7 @@ $('submit').onclick=async()=>{
     return;
   }
   hideBookingDock();
-  ev('booking_submitted',selected,lastClickedSponsor||null,{attributed:!!lastClickedSponsor});
+  ev('booking_submitted',selected,lastClickedSponsor||null,{attributed:!!lastClickedSponsor,request_id:data?.id||null,...analyticsSession()});
   const actualDate=new Date(chosen.calendar_date+'T12:00:00'),vn=venues.find(v=>v.id===venue)?.name||venue;
   const shareText=`⚽ يلا يا رجالة، الماتش علينا!\n\n📍 ${vn}\n📅 ${DAYS[actualDate.getDay()]} ${actualDate.getDate()} ${MONTHS[actualDate.getMonth()]}\n🕔 ${fh(Number(chosen.hour))} – ${fh((Number(chosen.hour)+span)%24)}\n\n🔥 مين جاهز ينزل؟\n⏳ الميعاد في انتظار تأكيد الملعب\n\n📲 شوف الملعب والميعاد:`;
   $('main').innerHTML=`<section class="card success"><div class="ok">⏳</div><h2>تم إرسال طلب الحجز</h2><div class="confidence"><b>في انتظار تأكيد الملعب</b><span>طلبك وصل يا ${esc(name)}، لكنه لسه مش حجز مؤكد. الإدارة هتراجع الموعد وتتواصل معاك عند التأكيد.</span></div><p><b>${esc(vn)}</b><br><b>${DAYS[actualDate.getDay()]} ${actualDate.getDate()} ${MONTHS[actualDate.getMonth()]}</b> · <b>${fh(Number(chosen.hour))}</b> · <b>${span} ساعة</b><br><b style="color:var(--booked)">${Number(data.price).toLocaleString()} جنيه</b></p><div class="success-actions"><button class="btn" id="rebookBtn">⚽ احجز موعد تاني</button><button class="btn share" id="shareBtn">↗ شارك مع صحابك</button></div><p class="muted" style="margin-top:12px">احتفظ بالصفحة لحد ما يوصلك تأكيد الإدارة.</p>${postBookingSponsor()}</section>`;
