@@ -1,6 +1,15 @@
 <!doctype html>
 <html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>ملاعب كابتن بيبو | احجز ملعبك</title>
+<title>ملاعب كابتن بيبو | احجز ملعبك في القاهرة</title>
+<meta name="description" content="احجز ملعب كورة مع ملاعب كابتن بيبو. شوف المواعيد المتاحة لملعب الري وملاعب شبرا القومية، وابعت طلب الحجز بسهولة. التأكيد بعد مراجعة الإدارة.">
+<meta name="robots" content="index,follow">
+<link rel="canonical" href="https://publicbooking.vercel.app/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="ملاعب كابتن بيبو | لمّ فريقك واحجز ملعبك">
+<meta property="og:description" content="شوف المواعيد المتاحة، اختار الملعب والساعة، وابعت طلب حجزك.">
+<meta property="og:url" content="https://publicbooking.vercel.app/">
+<meta name="theme-color" content="#0b7a3b">
+<meta name="color-scheme" content="dark">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@500;700;900&family=IBM+Plex+Sans+Arabic:wght@400;600;700&display=swap');
@@ -239,7 +248,7 @@ body.has-selection .wrap{padding-bottom:240px}body.has-selection .wa-float,body.
     <div class="summary" id="summary"></div>
     <label for="duration">مدة الحجز</label><select id="duration"></select>
     <div class="confidence"><b>⏳ ده طلب حجز — مش تأكيد نهائي لسه</b><span>بعد الإرسال هنستلم طلبك، والإدارة هتراجعه. الحجز يبقى مؤكد فقط بعد موافقة الملعب.</span></div><label for="name">الاسم</label><input id="name" autocomplete="name" placeholder="اسمك">
-    <label for="phone">رقم الموبايل</label><input id="phone" inputmode="numeric" autocomplete="tel" placeholder="01xxxxxxxxx"><div class="remember-note">هنحفظ الاسم والرقم على جهازك لتسريع الحجز الجاي.</div>
+    <label for="phone">رقم الموبايل</label><input id="phone" inputmode="numeric" autocomplete="tel" placeholder="01xxxxxxxxx"><div class="remember-note">هنحفظ الاسم والرقم على جهازك لمدة 90 يوم لتسريع الحجز الجاي. <button type="button" id="forgetCustomer" style="background:none;color:#f8cc58;border:0;text-decoration:underline;font:inherit;cursor:pointer">امسح بياناتي من الجهاز</button></div>
     <details><summary>+ عندك ملاحظة؟</summary><textarea id="details" placeholder="اكتبها هنا"></textarea></details>
     <button class="btn" id="submit">إرسال طلب الحجز</button>
     <p class="muted" style="margin-top:8px">الطلب بيتراجع من الإدارة، والحجز يتأكد بعد التواصل معاك.</p>
@@ -371,7 +380,7 @@ async function boot(){
   venues=data.venues||[];sponsors=data.sponsors||[];venue=venues.some(v=>v.id===Q.get('venue'))?Q.get('venue'):(venues[0]?.id||'rey');const sharedDate=Q.get('date');if(/^\\d{4}-\\d{2}-\\d{2}$/.test(sharedDate||'')){const d=new Date(sharedDate+'T12:00:00');const requestedHour=Number(Q.get('hour'));if(Q.get('hour')!==null&&Number.isInteger(requestedHour)&&requestedHour>=0&&requestedHour<6)d.setDate(d.getDate()-1);const today=new Date();today.setHours(0,0,0,0);const horizon=new Date(today);horizon.setDate(horizon.getDate()+14);if(!Number.isNaN(d.getTime())&&d>=today&&d<=horizon)date=d;}renderVenues();renderDays();renderSponsors();
   const c=await sb.rpc('pitch_public_booking_config',{p_venue:venue});
   if(!c.error){sponsors=c.data.sponsors||[];selectedVenueInfo=c.data.selected_venue||null;renderSponsors();showVenueLocation(selectedVenueInfo);renderVenueInfo()}
-  restoreCustomer();renderVenueInfo();await loadSlots();const sharedHour=Q.get('hour');if(sharedHour!==null&&/^\\d{1,2}$/.test(sharedHour)){const sh=Number(sharedHour);const match=slots.find(x=>Number(x.hour)===sh&&x.calendar_date===sharedDate&&x.available);if(match)choose(match.op_hour)}ev('page_view');
+  restoreCustomer();$('forgetCustomer').onclick=clearRememberedCustomer;renderVenueInfo();await loadSlots();const sharedHour=Q.get('hour');if(sharedHour!==null&&/^\\d{1,2}$/.test(sharedHour)){const sh=Number(sharedHour);const match=slots.find(x=>Number(x.hour)===sh&&x.calendar_date===sharedDate&&x.available);if(match)choose(match.op_hour)}ev('page_view');
 }
 function renderVenues(){
   $('venues').innerHTML=venues.map(v=>`<button class="chip ${v.id===venue?'on':''}" data-v="${v.id}">⚽ ${v.name}</button>`).join('');
