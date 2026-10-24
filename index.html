@@ -264,6 +264,10 @@ const ATTR={referrer:document.referrer||null,source:Q.get('utm_source'),medium:Q
 const DAYS=['الأحد','الإثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'],MONTHS=['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
 let venues=[],venue=null,date=new Date(),slots=[],selected=null,sponsors=[],lastClickedSponsor=null,selectedVenueInfo=null;
 try{lastClickedSponsor=sessionStorage.cb_last_sponsor||null}catch{}
+const PUBLIC_SHARE_BASE=location.origin+location.pathname;
+function bookingShareUrl(v,day,h){const u=new URL(PUBLIC_SHARE_BASE);if(v)u.searchParams.set('venue',v);if(day)u.searchParams.set('date',day);if(Number.isInteger(h))u.searchParams.set('hour',String(h));return u.toString()}
+function clearRememberedCustomer(){try{localStorage.removeItem('cb_customer')}catch{}$('name').value='';$('phone').value='';}
+
 const ymd=d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
 const dk=d=>`${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
 const fh=h=>`${h%12||12}:00 ${h>=12&&h<24?'م':'ص'}`;
@@ -340,9 +344,9 @@ function postBookingSponsor(){
 
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 function restoreCustomer(){
- try{const x=JSON.parse(localStorage.getItem('cb_customer')||'{}');if(x.name)$('name').value=String(x.name).slice(0,80);if(x.phone)$('phone').value=String(x.phone).replace(/\D/g,'').slice(0,15)}catch{}
+ try{const x=JSON.parse(localStorage.getItem('cb_customer')||'{}');if(x.savedAt&&Date.now()-x.savedAt>90*86400000){localStorage.removeItem('cb_customer');return}if(x.name)$('name').value=String(x.name).slice(0,80);if(x.phone)$('phone').value=String(x.phone).replace(/\D/g,'').slice(0,15)}catch{}
 }
-function rememberCustomer(name,phone){try{localStorage.setItem('cb_customer',JSON.stringify({name:String(name).slice(0,80),phone:String(phone).slice(0,15)}))}catch{}}
+function rememberCustomer(name,phone){try{localStorage.setItem('cb_customer',JSON.stringify({name:String(name).slice(0,80),phone:String(phone).slice(0,15),savedAt:Date.now()}))}catch{}}
 function renderVenueInfo(){
  const v=selectedVenueInfo||venues.find(x=>x.id===venue)||{};const box=$('venueInfo');if(!box)return;
  const address=v.address||'';box.innerHTML=`<b>⚽ ${esc(v.name||'الملعب')}</b><span>${address?'📍 '+esc(address):'اختار اليوم والميعاد المناسب، وموقع الملعب متاح من زر الخريطة.'}</span>`;box.classList.add('show');
@@ -507,7 +511,7 @@ $('submit').onclick=async()=>{
   const actualDate=new Date(chosen.calendar_date+'T12:00:00'),vn=venues.find(v=>v.id===venue)?.name||venue;
   const shareText=`طلبت حجز ${vn} ${DAYS[actualDate.getDay()]} ${actualDate.getDate()} ${MONTHS[actualDate.getMonth()]} الساعة ${fh(Number(chosen.hour))} لمدة ${span} ساعة — في انتظار تأكيد الملعب.`;
   $('main').innerHTML=`<section class="card success"><div class="ok">⏳</div><h2>تم إرسال طلب الحجز</h2><div class="confidence"><b>في انتظار تأكيد الملعب</b><span>طلبك وصل يا ${esc(name)}، لكنه لسه مش حجز مؤكد. الإدارة هتراجع الموعد وتتواصل معاك عند التأكيد.</span></div><p><b>${esc(vn)}</b><br><b>${DAYS[actualDate.getDay()]} ${actualDate.getDate()} ${MONTHS[actualDate.getMonth()]}</b> · <b>${fh(Number(chosen.hour))}</b> · <b>${span} ساعة</b><br><b style="color:var(--booked)">${Number(data.price).toLocaleString()} جنيه</b></p><div class="success-actions"><button class="btn" id="rebookBtn">⚽ احجز موعد تاني</button><button class="btn share" id="shareBtn">↗ شارك مع صحابك</button></div><p class="muted" style="margin-top:12px">احتفظ بالصفحة لحد ما يوصلك تأكيد الإدارة.</p>${postBookingSponsor()}</section>`;
-  $('rebookBtn').onclick=resetForRebook;$('shareBtn').onclick=()=>shareBooking(shareText);
+  $('rebookBtn').onclick=resetForRebook;$('shareBtn').onclick=()=>shareBooking(shareText,bookingShareUrl(venue,ymd(date),Number(chosen.hour)));
 };
 boot().catch(e=>{console.error(e);$('slotStatus').textContent='حصل خطأ في التحميل. حدّث الصفحة.'});
 </script>
