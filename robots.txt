@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://publicbooking.vercel.app/sitemap.xml

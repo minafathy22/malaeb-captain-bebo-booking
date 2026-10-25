@@ -1,0 +1,16 @@
+-- DESIGN ONLY: Do not apply to production Supabase.
+-- Idempotency contract for pitch_public_submit_booking_v2:
+-- 1. Client sends a UUID request key, reused on retry of the SAME attempt.
+-- 2. Store key + request payload fingerprint + resulting booking_request ID atomically.
+-- 3. Unique key must be checked under a transactional lock BEFORE phone/client rate limits.
+-- 4. Same key + same fingerprint returns the original request result, including its current status.
+-- 5. Same key + different fingerprint returns IDEMPOTENCY_CONFLICT.
+-- 6. Concurrent same-key calls serialize; do not create duplicate rows.
+-- 7. Keep existing per-slot advisory locks, availability checks, pricing and blocked-customer rules.
+-- 8. Do not treat client-provided keys as authorization for exposing personal details.
+-- 9. Add explicit retention/expiry policy and abuse controls.
+-- 10. Deploy and verify on an isolated Supabase environment, then review migration before production.
+--
+-- Test cases: two simultaneous identical calls; lost response then retry;
+-- different payload same key; same phone different slot; same slot different phone;
+-- crossing midnight; 06:00 operational boundary; expired/confirmed/rejected requests.

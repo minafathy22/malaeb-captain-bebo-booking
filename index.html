@@ -1,6 +1,23 @@
 <!doctype html>
 <html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>ملاعب كابتن بيبو | احجز ملعبك</title>
+<title>حجز ملاعب كرة قدم في شبرا القومية والري | ملاعب كابتن بيبو</title>
+<meta name="description" content="احجز ملعب كورة مع ملاعب كابتن بيبو. شوف المواعيد المتاحة لملعب الري وملاعب شبرا القومية، وابعت طلب الحجز بسهولة. التأكيد بعد مراجعة الإدارة.">
+<meta name="robots" content="index,follow,max-image-preview:large">
+<link rel="canonical" href="https://publicbooking.vercel.app/">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="ar_EG">
+<meta property="og:site_name" content="ملاعب كابتن بيبو">
+<meta property="og:title" content="ملاعب كابتن بيبو | لمّ فريقك واحجز ملعبك">
+<meta property="og:description" content="شوف المواعيد المتاحة، اختار الملعب والساعة، وابعت طلب حجزك.">
+<meta property="og:url" content="https://publicbooking.vercel.app/">
+<meta name="twitter:card" content="summary">
+<meta name="theme-color" content="#0b7a3b">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="icon" href="/icon.svg" type="image/svg+xml">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="color-scheme" content="dark">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":"ملاعب كابتن بيبو","url":"https://publicbooking.vercel.app/","inLanguage":"ar-EG","description":"مواعيد ملاعب كابتن بيبو وطلبات حجز ملاعب كرة القدم"}</script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@500;700;900&family=IBM+Plex+Sans+Arabic:wght@400;600;700&display=swap');
@@ -74,6 +91,8 @@ h2{font:800 1.02rem var(--display);margin:0 0 4px;display:flex;align-items:cente
 .booking-trust{display:flex;gap:7px;flex-wrap:wrap;margin:8px 0 12px}
 .trust-pill{font-size:.74rem;background:var(--slot);color:var(--chalk-dim);padding:5px 9px;border-radius:999px;border:1px solid var(--lane)}
 label{display:block;color:var(--chalk-dim);font-size:.86rem;margin:10px 0 5px}
+button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid #f8cc58;outline-offset:3px}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition:none!important;animation:none!important}}
 input,select,textarea{width:100%;background:var(--night);border:1px solid var(--lane);border-radius:10px;
   padding:12px;color:var(--chalk);font:inherit}
 textarea{min-height:65px}
@@ -210,7 +229,7 @@ body.has-selection .wrap{padding-bottom:240px}body.has-selection .wa-float,body.
 @media(max-width:350px){.dock-inner{gap:7px}.dock-action button{padding:10px 8px;font-size:.74rem}}
 </style></head><body>
 
-<header class="hero"><div class="hero-inner"><span class="hero-kicker">الكورة تجمعنا</span><div class="brand">⚽ ملاعب كابتن بيبو</div><p>لمّ فريقك… واختار ميعادكم</p><a class="hero-book" href="#bookingStart">شوف المواعيد المتاحة ←</a><div class="hero-note">اختار الميعاد · ابعت طلبك · استنى تأكيد الملعب</div></div></header>
+<header class="hero"><div class="hero-inner"><span class="hero-kicker">الكورة تجمعنا</span><h1 class="brand">⚽ ملاعب كابتن بيبو</h1><p>لمّ فريقك… واختار ميعادكم</p><a class="hero-book" href="#bookingStart">شوف المواعيد المتاحة ←</a><div class="hero-note">اختار الميعاد · ابعت طلبك · استنى تأكيد الملعب</div></div></header>
 
 <main class="wrap" id="main"><nav class="journey" aria-label="خطوات الحجز"><span><b>١</b> الملعب</span><span><b>٢</b> اليوم والساعة</span><span><b>٣</b> طلب الحجز</span></nav>
 
@@ -222,7 +241,7 @@ body.has-selection .wrap{padding-bottom:240px}body.has-selection .wa-float,body.
   <section class="card"><h2><span class="step-num">٢</span> اختار اليوم والساعة</h2>
     <p class="section-note">اليوم التشغيلي يبدأ 6 صباحًا وينتهي 5:59 صباح اليوم التالي — مواعيد بعد منتصف الليل بتظهر مع نفس يوم التشغيل.</p>
     <div class="days" id="days"></div>
-    <div id="slotStatus" class="status">جارٍ تحميل المواعيد…</div>
+    <div id="slotStatus" class="status" role="status" aria-live="polite">جارٍ تحميل المواعيد…</div>
     <div class="slots" id="slots"></div>
     <div id="recovery" class="recovery"></div>
   </section>
@@ -237,7 +256,7 @@ body.has-selection .wrap{padding-bottom:240px}body.has-selection .wa-float,body.
     <div class="summary" id="summary"></div>
     <label for="duration">مدة الحجز</label><select id="duration"></select>
     <div class="confidence"><b>⏳ ده طلب حجز — مش تأكيد نهائي لسه</b><span>بعد الإرسال هنستلم طلبك، والإدارة هتراجعه. الحجز يبقى مؤكد فقط بعد موافقة الملعب.</span></div><label for="name">الاسم</label><input id="name" autocomplete="name" placeholder="اسمك">
-    <label for="phone">رقم الموبايل</label><input id="phone" inputmode="numeric" autocomplete="tel" placeholder="01xxxxxxxxx"><div class="remember-note">هنحفظ الاسم والرقم على جهازك لتسريع الحجز الجاي.</div>
+    <label for="phone">رقم الموبايل</label><input id="phone" inputmode="numeric" autocomplete="tel" placeholder="01xxxxxxxxx"><div class="remember-note"><label style="display:flex;gap:8px;align-items:center"><input type="checkbox" id="rememberConsent" style="width:auto;min-height:20px"> احفظ اسمي ورقمي على الجهاز لمدة 90 يوم لتسريع الحجز الجاي (اختياري)</label> <button type="button" id="forgetCustomer" style="background:none;color:#f8cc58;border:0;text-decoration:underline;font:inherit;cursor:pointer">امسح بياناتي من الجهاز</button></div>
     <details><summary>+ عندك ملاحظة؟</summary><textarea id="details" placeholder="اكتبها هنا"></textarea></details>
     <button class="btn" id="submit">إرسال طلب الحجز</button>
     <p class="muted" style="margin-top:8px">الطلب بيتراجع من الإدارة، والحجز يتأكد بعد التواصل معاك.</p>
@@ -264,6 +283,11 @@ const ATTR={referrer:document.referrer||null,source:Q.get('utm_source'),medium:Q
 const DAYS=['الأحد','الإثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'],MONTHS=['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
 let venues=[],venue=null,date=new Date(),slots=[],selected=null,sponsors=[],lastClickedSponsor=null,selectedVenueInfo=null;
 try{lastClickedSponsor=sessionStorage.cb_last_sponsor||null}catch{}
+const PUBLIC_SHARE_BASE='https://publicbooking.vercel.app/';
+const analyticsSession=()=>({visit_id:VISIT,source:ATTR.source||'direct',medium:ATTR.medium||null,campaign:ATTR.campaign||null});
+function bookingShareUrl(v,day,h){const u=new URL(PUBLIC_SHARE_BASE);if(v)u.searchParams.set('venue',v);if(day)u.searchParams.set('date',day);if(Number.isInteger(h))u.searchParams.set('hour',String(h));return u.toString()}
+function clearRememberedCustomer(){try{localStorage.removeItem('cb_customer')}catch{}$('name').value='';$('phone').value='';}
+
 const ymd=d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
 const dk=d=>`${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
 const fh=h=>`${h%12||12}:00 ${h>=12&&h<24?'م':'ص'}`;
@@ -340,9 +364,9 @@ function postBookingSponsor(){
 
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 function restoreCustomer(){
- try{const x=JSON.parse(localStorage.getItem('cb_customer')||'{}');if(x.name)$('name').value=String(x.name).slice(0,80);if(x.phone)$('phone').value=String(x.phone).replace(/\D/g,'').slice(0,15)}catch{}
+ try{const x=JSON.parse(localStorage.getItem('cb_customer')||'{}');if(x.savedAt&&Date.now()-x.savedAt>90*86400000){localStorage.removeItem('cb_customer');return}if(x.name)$('name').value=String(x.name).slice(0,80);if(x.phone)$('phone').value=String(x.phone).replace(/\D/g,'').slice(0,15);if($('rememberConsent'))$('rememberConsent').checked=true}catch{}
 }
-function rememberCustomer(name,phone){try{localStorage.setItem('cb_customer',JSON.stringify({name:String(name).slice(0,80),phone:String(phone).slice(0,15)}))}catch{}}
+function rememberCustomer(name,phone){try{localStorage.setItem('cb_customer',JSON.stringify({name:String(name).slice(0,80),phone:String(phone).slice(0,15),savedAt:Date.now()}))}catch{}}
 function renderVenueInfo(){
  const v=selectedVenueInfo||venues.find(x=>x.id===venue)||{};const box=$('venueInfo');if(!box)return;
  const address=v.address||'';box.innerHTML=`<b>⚽ ${esc(v.name||'الملعب')}</b><span>${address?'📍 '+esc(address):'اختار اليوم والميعاد المناسب، وموقع الملعب متاح من زر الخريطة.'}</span>`;box.classList.add('show');
@@ -350,8 +374,8 @@ function renderVenueInfo(){
 function resetForRebook(){
  selected=null;$('main').querySelector('.success')?.remove();location.reload();
 }
-async function shareBooking(text){
- try{if(navigator.share){await navigator.share({title:'ملاعب كابتن بيبو',text,url:location.href});return}await navigator.clipboard.writeText(text+' '+location.href);alert('اتنسخت تفاصيل الحجز — ابعتها لصحابك على واتساب.')}catch{}
+async function shareBooking(text,bookingUrl=location.href){
+ try{if(navigator.share){await navigator.share({title:'ملاعب كابتن بيبو',text,url:bookingUrl});return}await navigator.clipboard.writeText(text+' '+bookingUrl);alert('اتنسخت تفاصيل طلب الحجز — ابعتها لصحابك على واتساب. الموعد لسه في انتظار التأكيد.')}catch{}
 }
 
 function showVenueLocation(sv){
@@ -362,10 +386,10 @@ function showVenueLocation(sv){
 }
 async function boot(){
   const {data,error}=await sb.rpc('pitch_public_booking_config',{p_venue:null});if(error)throw error;
-  venues=data.venues||[];sponsors=data.sponsors||[];venue=venues[0]?.id||'rey';renderVenues();renderDays();renderSponsors();
+  venues=data.venues||[];sponsors=data.sponsors||[];venue=venues.some(v=>v.id===Q.get('venue'))?Q.get('venue'):(venues[0]?.id||'rey');const sharedDate=Q.get('date');if(/^\\d{4}-\\d{2}-\\d{2}$/.test(sharedDate||'')){const d=new Date(sharedDate+'T12:00:00');const requestedHour=Number(Q.get('hour'));if(Q.get('hour')!==null&&Number.isInteger(requestedHour)&&requestedHour>=0&&requestedHour<6)d.setDate(d.getDate()-1);const today=new Date();today.setHours(0,0,0,0);const horizon=new Date(today);horizon.setDate(horizon.getDate()+14);if(!Number.isNaN(d.getTime())&&d>=today&&d<=horizon)date=d;}renderVenues();renderDays();renderSponsors();
   const c=await sb.rpc('pitch_public_booking_config',{p_venue:venue});
   if(!c.error){sponsors=c.data.sponsors||[];selectedVenueInfo=c.data.selected_venue||null;renderSponsors();showVenueLocation(selectedVenueInfo);renderVenueInfo()}
-  restoreCustomer();renderVenueInfo();await loadSlots();ev('page_view');
+  restoreCustomer();$('forgetCustomer').onclick=clearRememberedCustomer;renderVenueInfo();await loadSlots();const sharedHour=Q.get('hour');if(sharedHour!==null&&/^\\d{1,2}$/.test(sharedHour)){const sh=Number(sharedHour);const match=slots.find(x=>Number(x.hour)===sh&&x.calendar_date===sharedDate&&x.available);if(match)choose(match.op_hour)}ev('page_view');
 }
 function renderVenues(){
   $('venues').innerHTML=venues.map(v=>`<button class="chip ${v.id===venue?'on':''}" data-v="${v.id}">⚽ ${v.name}</button>`).join('');
@@ -405,11 +429,11 @@ function renderSlots(){
     const icon=period==='نهار'?'☀️':period==='مساء'?'🌙':'🌘';
     const head=period!==lastPeriod?`<div class="slot-period">${icon} ${period}</div>`:'';
     lastPeriod=period;
-    return head+`<button class="slot ${!s.available?'off':selected===s.op_hour?'on':''}" data-h="${s.op_hour}" aria-disabled="${!s.available?'true':'false'}"><span class="slot-range"><bdi>${hourRange(Number(s.hour))}</bdi></span><small>${s.available?Number(s.price).toLocaleString()+' ج':'محجوز'}</small></button>`;
+    return head+`<button class="slot ${!s.available?'off':selected===s.op_hour?'on':''}" data-h="${s.op_hour}" aria-pressed="${selected===s.op_hour?'true':'false'}" aria-label="${esc(hourRange(Number(s.hour)))}، ${s.available?Number(s.price).toLocaleString()+' جنيه':'محجوز'}"><span class="slot-range"><bdi>${hourRange(Number(s.hour))}</bdi></span><small>${s.available?Number(s.price).toLocaleString()+' ج':'محجوز'}</small></button>`;
   }).join('');
   document.querySelectorAll('.slot').forEach(b=>b.onclick=()=>{
     const h=Number(b.dataset.h),x=slots.find(z=>z.op_hour===h);
-    if(x?.available)choose(h); else showRecovery(h,true);
+    if(x?.available)choose(h); else {ev('unavailable_slot_selected',Number(x?.hour??h),null,{calendar_date:x?.calendar_date||null,operating_day:ymd(date)});showRecovery(h,true);}
   });
   showRecovery(null,false);
 }
@@ -491,10 +515,28 @@ $('submit').onclick=async()=>{
   const name=$('name').value.trim(),phone=normPhone($('phone').value),span=Number($('duration').value||1);
   if(!name)return alert('اكتب اسمك');
   if(!/^01\d{9}$/.test(phone))return alert('راجع رقم الموبايل');
-  rememberCustomer(name,phone);const b=$('submit');b.disabled=true;b.textContent='جارٍ الإرسال…';
+  const b=$('submit');b.disabled=true;b.textContent='جارٍ الإرسال…';
   const chosen=slots.find(x=>x.op_hour===selected);
   if(!chosen){b.disabled=false;b.textContent='إرسال طلب الحجز';return alert('اختار ميعاد متاح');}
-  const {data,error}=await sb.rpc('pitch_public_submit_booking',{p_venue:venue,p_date:chosen.calendar_date,p_hour:Number(chosen.hour),p_span:span,p_name:name,p_phone:phone,p_details:$('details').value.trim()||null,p_sponsor_code:lastClickedSponsor||null});
+  const requestArgs={p_venue:venue,p_date:chosen.calendar_date,p_hour:Number(chosen.hour),p_span:span,p_name:name,p_phone:phone,p_details:$('details').value.trim()||null,p_sponsor_code:lastClickedSponsor||null};
+  // Guard accidental double taps and ambiguous retries on the same device. Server remains authoritative.
+  const requestFingerprint=[venue,chosen.calendar_date,chosen.hour,span,phone].join('|');
+  const guardKey='cb_pending_request_guard';
+  try{const prev=JSON.parse(sessionStorage.getItem(guardKey)||'null');if(prev?.fingerprint===requestFingerprint&&Date.now()-prev.at<120000){b.disabled=false;b.textContent='إرسال طلب الحجز';alert('طلب بنفس البيانات اتبعت قريب. راجع تأكيده مع الملعب قبل ما تعيد الإرسال.');return}}catch{}
+  ev('booking_submit_attempt',selected,null,{span,...analyticsSession()});
+  let data,error;
+  try{
+    const result=await sb.rpc('pitch_public_submit_booking',requestArgs);
+    data=result.data;error=result.error;
+  }catch(e){error=e}
+  if(error&&!String(error.message||'').match(/SLOT_TAKEN|CUSTOMER_BLOCKED|RATE_LIMITED|INVALID_|OUTSIDE_WORK_HOURS|DATE_OUT_OF_RANGE/)){
+    try{sessionStorage.setItem(guardKey,JSON.stringify({fingerprint:requestFingerprint,at:Date.now(),state:'unknown'}))}catch{}
+    // Network failure is ambiguous: the server may already have accepted the request.
+    b.disabled=false;b.textContent='إرسال طلب الحجز';
+    alert('مش قادرين نتأكد إن الطلب وصل. بلاش تبعت نفس الطلب تاني دلوقتي؛ تواصل مع الملعب للتأكد من حالته.');
+    ev('booking_result_unknown',selected,null,{span,...analyticsSession()});
+    return;
+  }
   if(error){
     b.disabled=false;b.textContent='إرسال طلب الحجز';
     if(String(error.message).includes('SLOT_TAKEN')){ev('slot_lost',selected);alert('الميعاد اتحجز حالًا. هنحدّث لك المواعيد المتاحة.');selected=null;$('form').style.display='none';await loadSlots();}
@@ -502,13 +544,16 @@ $('submit').onclick=async()=>{
     else{ev('booking_error',selected,null,{message:String(error.message||'error').slice(0,100)});alert('حصل خطأ، حاول تاني');}
     return;
   }
+  try{sessionStorage.setItem(guardKey,JSON.stringify({fingerprint:requestFingerprint,at:Date.now(),state:'submitted',requestId:data?.id||null}))}catch{}
+  if($('rememberConsent')?.checked)rememberCustomer(name,phone);else{try{localStorage.removeItem('cb_customer')}catch{}}
   hideBookingDock();
-  ev('booking_submitted',selected,lastClickedSponsor||null,{attributed:!!lastClickedSponsor});
+  ev('booking_submitted',selected,lastClickedSponsor||null,{attributed:!!lastClickedSponsor,request_id:data?.id||null,...analyticsSession()});
   const actualDate=new Date(chosen.calendar_date+'T12:00:00'),vn=venues.find(v=>v.id===venue)?.name||venue;
-  const shareText=`حجزت ${vn} ${DAYS[actualDate.getDay()]} ${actualDate.getDate()} ${MONTHS[actualDate.getMonth()]} الساعة ${fh(Number(chosen.hour))} لمدة ${span} ساعة — هتيجي؟`;
+  const shareText=`⚽ يلا يا رجالة، الماتش علينا!\n\n📍 ${vn}\n📅 ${DAYS[actualDate.getDay()]} ${actualDate.getDate()} ${MONTHS[actualDate.getMonth()]}\n🕔 ${fh(Number(chosen.hour))} – ${fh((Number(chosen.hour)+span)%24)}\n\n🔥 مين جاهز ينزل؟\n⏳ الميعاد في انتظار تأكيد الملعب\n\n📲 شوف الملعب والميعاد:`;
   $('main').innerHTML=`<section class="card success"><div class="ok">⏳</div><h2>تم إرسال طلب الحجز</h2><div class="confidence"><b>في انتظار تأكيد الملعب</b><span>طلبك وصل يا ${esc(name)}، لكنه لسه مش حجز مؤكد. الإدارة هتراجع الموعد وتتواصل معاك عند التأكيد.</span></div><p><b>${esc(vn)}</b><br><b>${DAYS[actualDate.getDay()]} ${actualDate.getDate()} ${MONTHS[actualDate.getMonth()]}</b> · <b>${fh(Number(chosen.hour))}</b> · <b>${span} ساعة</b><br><b style="color:var(--booked)">${Number(data.price).toLocaleString()} جنيه</b></p><div class="success-actions"><button class="btn" id="rebookBtn">⚽ احجز موعد تاني</button><button class="btn share" id="shareBtn">↗ شارك مع صحابك</button></div><p class="muted" style="margin-top:12px">احتفظ بالصفحة لحد ما يوصلك تأكيد الإدارة.</p>${postBookingSponsor()}</section>`;
-  $('rebookBtn').onclick=resetForRebook;$('shareBtn').onclick=()=>shareBooking(shareText);
+  $('rebookBtn').onclick=resetForRebook;$('shareBtn').onclick=()=>shareBooking(shareText,bookingShareUrl(venue,chosen.calendar_date,Number(chosen.hour)));
 };
 boot().catch(e=>{console.error(e);$('slotStatus').textContent='حصل خطأ في التحميل. حدّث الصفحة.'});
+if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('/sw.js').catch(e=>console.warn('PWA registration unavailable',e)));}
 </script>
 </body></html>
