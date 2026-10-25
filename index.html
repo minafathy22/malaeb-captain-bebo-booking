@@ -14,6 +14,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="color-scheme" content="dark">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":"ملاعب كابتن بيبو","url":"https://publicbooking.vercel.app/","inLanguage":"ar-EG","description":"مواعيد ملاعب كابتن بيبو وطلبات حجز ملاعب كرة القدم"}</script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@500;700;900&family=IBM+Plex+Sans+Arabic:wght@400;600;700&display=swap');
@@ -371,7 +372,7 @@ function resetForRebook(){
  selected=null;$('main').querySelector('.success')?.remove();location.reload();
 }
 async function shareBooking(text,bookingUrl=location.href){
- try{if(navigator.share){await navigator.share({title:'ملاعب كابتن بيبو',text,url:bookingUrl});return}await navigator.clipboard.writeText(text+' '+bookingUrl);alert('اتنسخت تفاصيل الحجز — ابعتها لصحابك على واتساب.')}catch{}
+ try{if(navigator.share){await navigator.share({title:'ملاعب كابتن بيبو',text,url:bookingUrl});return}await navigator.clipboard.writeText(text+' '+bookingUrl);alert('اتنسخت تفاصيل طلب الحجز — ابعتها لصحابك على واتساب. الموعد لسه في انتظار التأكيد.')}catch{}
 }
 
 function showVenueLocation(sv){
@@ -429,7 +430,7 @@ function renderSlots(){
   }).join('');
   document.querySelectorAll('.slot').forEach(b=>b.onclick=()=>{
     const h=Number(b.dataset.h),x=slots.find(z=>z.op_hour===h);
-    if(x?.available)choose(h); else showRecovery(h,true);
+    if(x?.available)choose(h); else {ev('unavailable_slot_selected',Number(x?.hour??h),null,{calendar_date:x?.calendar_date||null,operating_day:ymd(date)});showRecovery(h,true);}
   });
   showRecovery(null,false);
 }
