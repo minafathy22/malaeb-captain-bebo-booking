@@ -9,6 +9,10 @@
 <meta property="og:description" content="شوف المواعيد المتاحة، اختار الملعب والساعة، وابعت طلب حجزك.">
 <meta property="og:url" content="https://publicbooking.vercel.app/">
 <meta name="theme-color" content="#0b7a3b">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="icon" href="/icon.svg" type="image/svg+xml">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="color-scheme" content="dark">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
@@ -539,5 +543,6 @@ $('submit').onclick=async()=>{
   $('rebookBtn').onclick=resetForRebook;$('shareBtn').onclick=()=>shareBooking(shareText,bookingShareUrl(venue,chosen.calendar_date,Number(chosen.hour)));
 };
 boot().catch(e=>{console.error(e);$('slotStatus').textContent='حصل خطأ في التحميل. حدّث الصفحة.'});
+if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('/sw.js').catch(e=>console.warn('PWA registration unavailable',e)));}
 </script>
 </body></html>
