@@ -512,7 +512,7 @@ $('submit').onclick=async()=>{
   const name=$('name').value.trim(),phone=normPhone($('phone').value),span=Number($('duration').value||1);
   if(!name)return alert('اكتب اسمك');
   if(!/^01\d{9}$/.test(phone))return alert('راجع رقم الموبايل');
-  if($('rememberConsent')?.checked)rememberCustomer(name,phone);else{try{localStorage.removeItem('cb_customer')}catch{}}const b=$('submit');b.disabled=true;b.textContent='جارٍ الإرسال…';
+  const b=$('submit');b.disabled=true;b.textContent='جارٍ الإرسال…';
   const chosen=slots.find(x=>x.op_hour===selected);
   if(!chosen){b.disabled=false;b.textContent='إرسال طلب الحجز';return alert('اختار ميعاد متاح');}
   const requestArgs={p_venue:venue,p_date:chosen.calendar_date,p_hour:Number(chosen.hour),p_span:span,p_name:name,p_phone:phone,p_details:$('details').value.trim()||null,p_sponsor_code:lastClickedSponsor||null};
@@ -536,6 +536,7 @@ $('submit').onclick=async()=>{
     else{ev('booking_error',selected,null,{message:String(error.message||'error').slice(0,100)});alert('حصل خطأ، حاول تاني');}
     return;
   }
+  if($('rememberConsent')?.checked)rememberCustomer(name,phone);else{try{localStorage.removeItem('cb_customer')}catch{}}
   hideBookingDock();
   ev('booking_submitted',selected,lastClickedSponsor||null,{attributed:!!lastClickedSponsor,request_id:data?.id||null,...analyticsSession()});
   const actualDate=new Date(chosen.calendar_date+'T12:00:00'),vn=venues.find(v=>v.id===venue)?.name||venue;
