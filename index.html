@@ -516,6 +516,10 @@ $('submit').onclick=async()=>{
   const chosen=slots.find(x=>x.op_hour===selected);
   if(!chosen){b.disabled=false;b.textContent='إرسال طلب الحجز';return alert('اختار ميعاد متاح');}
   const requestArgs={p_venue:venue,p_date:chosen.calendar_date,p_hour:Number(chosen.hour),p_span:span,p_name:name,p_phone:phone,p_details:$('details').value.trim()||null,p_sponsor_code:lastClickedSponsor||null};
+  // Guard accidental double taps and ambiguous retries on the same device. Server remains authoritative.
+  const requestFingerprint=[venue,chosen.calendar_date,chosen.hour,span,phone].join('|');
+  const guardKey='cb_pending_request_guard';
+  try{const prev=JSON.parse(sessionStorage.getItem(guardKey)||'null');if(prev?.fingerprint===requestFingerprint&&Date.now()-prev.at<120000){b.disabled=false;b.textContent='إرسال طلب الحجز';alert('طلب بنفس البيانات اتبعت قريب. راجع تأكيده مع الملعب قبل ما تعيد الإرسال.');return}}catch{}
   ev('booking_submit_attempt',selected,null,{span,...analyticsSession()});
   let data,error;
   try{
@@ -523,6 +527,7 @@ $('submit').onclick=async()=>{
     data=result.data;error=result.error;
   }catch(e){error=e}
   if(error&&!String(error.message||'').match(/SLOT_TAKEN|CUSTOMER_BLOCKED|RATE_LIMITED|INVALID_|OUTSIDE_WORK_HOURS|DATE_OUT_OF_RANGE/)){
+    try{sessionStorage.setItem(guardKey,JSON.stringify({fingerprint:requestFingerprint,at:Date.now(),state:'unknown'}))}catch{}
     // Network failure is ambiguous: the server may already have accepted the request.
     b.disabled=false;b.textContent='إرسال طلب الحجز';
     alert('مش قادرين نتأكد إن الطلب وصل. بلاش تبعت نفس الطلب تاني دلوقتي؛ تواصل مع الملعب للتأكد من حالته.');
@@ -536,6 +541,7 @@ $('submit').onclick=async()=>{
     else{ev('booking_error',selected,null,{message:String(error.message||'error').slice(0,100)});alert('حصل خطأ، حاول تاني');}
     return;
   }
+  try{sessionStorage.setItem(guardKey,JSON.stringify({fingerprint:requestFingerprint,at:Date.now(),state:'submitted',requestId:data?.id||null}))}catch{}
   if($('rememberConsent')?.checked)rememberCustomer(name,phone);else{try{localStorage.removeItem('cb_customer')}catch{}}
   hideBookingDock();
   ev('booking_submitted',selected,lastClickedSponsor||null,{attributed:!!lastClickedSponsor,request_id:data?.id||null,...analyticsSession()});
