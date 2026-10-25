@@ -1,0 +1,20 @@
+{
+  "name": "ملاعب كابتن بيبو",
+  "short_name": "كابتن بيبو",
+  "description": "شوف المواعيد وابعت طلب حجز ملعب",
+  "lang": "ar",
+  "dir": "rtl",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#0d1912",
+  "theme_color": "#0b7a3b",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
